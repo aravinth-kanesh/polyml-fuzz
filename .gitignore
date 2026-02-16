@@ -1,0 +1,57 @@
+# Build outputs
+build/
+*.o
+*.a
+*.so
+*.dylib
+
+# External dependencies (clone separately — see README)
+AFLplusplus/
+polyml-src/
+
+# AFL++ / Fuzzing outputs
+out/
+*.dSYM/
+
+# Temporary files
+*.swp
+*.swo
+*~
+
+# Harness temporary files
+harness/harness
+harness/harness_afl
+harness/input.sml
+
+# Campaign results (except early-findings)
+results/campaign-*/
+results/*-test/
+results/dry-run-*/
+results/main-campaign-*/
+results/phase1-*/
+results/phase2-*/
+
+# Analytics and launcher logs
+/logs/
+
+# Claude Code
+.claude/
+CLAUDE.md
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride

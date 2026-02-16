@@ -1,0 +1,7 @@
+fun describe n =
+  case n of
+      0 => "zero"
+    | 1 => "one"
+    | _ => "many"
+
+val _ = describe 2

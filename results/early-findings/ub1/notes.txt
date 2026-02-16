@@ -1,0 +1,5 @@
+Date: 2025-12-09
+Build: Poly/ML 5.9.2 with ASan/UBSan (ARM64)
+Repro: poly < inputs/seed_fun.sml   # and inputs/seed_datatype.sml
+Symptom: UBSan undefined-behavior in libpolyml/arm64.cpp:246 (unsigned addition overflow)
+Notes: Triggered by simple, valid SML programs. Indicates arm64-specific bug in Poly/ML runtime.

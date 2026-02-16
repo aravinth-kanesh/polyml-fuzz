@@ -1,0 +1,33 @@
+(* Deeply nested type definitions *)
+
+datatype 'a option = NONE | SOME of 'a;
+datatype 'a list = Nil | Cons of 'a * 'a list;
+datatype 'a tree = Leaf | Node of 'a * 'a tree * 'a tree;
+
+(* Nested composition *)
+datatype 'a nested =
+    Simple of 'a
+  | ListOf of 'a list
+  | TreeOf of 'a tree
+  | OptionOf of 'a option;
+
+fun unwrap (Simple x) = x
+  | unwrap (ListOf Nil) = 0
+  | unwrap (ListOf (Cons (x, _))) = x
+  | unwrap (TreeOf Leaf) = 0
+  | unwrap (TreeOf (Node (x, _, _))) = x
+  | unwrap (OptionOf NONE) = 0
+  | unwrap (OptionOf (SOME x)) = x;
+
+(* Tree of options *)
+val complex1 = TreeOf (Node (SOME 1,
+                             Node (SOME 2, Leaf, Leaf),
+                             Node (NONE, Leaf, Leaf)));
+
+(* List of trees *)
+datatype forest = Forest of int tree list;
+
+fun count_nodes (Forest Nil) = 0
+  | count_nodes (Forest (Cons (Leaf, rest))) = count_nodes (Forest rest)
+  | count_nodes (Forest (Cons (Node (_, l, r), rest))) =
+      1 + count_nodes (Forest (Cons (l, Cons (r, rest))));
