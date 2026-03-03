@@ -79,19 +79,26 @@ Always validate after adding seeds:
 ./scripts/validate-seeds.sh
 ```
 
-Expected output:
-- Most seeds should pass or have parse errors (OK)
-- Timeouts are concerning (indicates hang)
-- Crashes should be rare (unless in regression/)
+Expected output: **68 pass, 1 timeout, 0 crashes**
+
+Any seed that crashes poly should be moved to `regression/` and documented in `results/early-findings/`.
+The single expected timeout is a known stress seed that exceeds the validation time limit.
 
 ## Seed Corpus Strategy
 
-The 69 seeds are strategically designed to maximise bug discovery:
+The 69 seeds are split into two subsets aligned with the phased campaign strategy:
 
-1. **Core Features** (12 basic seeds) - Exercise fundamental language constructs
-2. **Type System** (11 datatype + 12 module seeds) - Test complex type checking and module system
-3. **Parser Stress** (11 operator + 13 stress + 8 edge-case seeds) - Pathological inputs designed to find parser bugs
-4. **Known Issues** (2 regression seeds) - Programs that previously triggered sanitiser warnings
+### Subset A -- Phase 1 (Lexer-focused, ~33 seeds)
+
+Categories: `basic/`, `operators/`, `edge-cases/`, `regression/`
+
+These seeds exercise lexer tokenisation: identifiers, operators, literals, nested comments, and boundary values. Programs are short with limited parse depth, designed to stress the C++ lexer runtime.
+
+### Subset B -- Phase 2 (Parser-focused, ~36 seeds)
+
+Categories: `stress/`, `modules/`, `datatypes/`
+
+These seeds exercise the parser with deeply nested structures, module hierarchies, complex type expressions, and functor applications. Phase 2 is only launched if Phase 1 produces meaningful results.
 
 Each seed is hand-crafted to:
 - Cover distinct language features
@@ -102,4 +109,4 @@ Each seed is hand-crafted to:
 ---
 
 **Status:** [DONE] **COMPLETE** (69/50+ target achieved)
-**Last Updated:** January 2026
+**Last Updated:** February 2026

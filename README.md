@@ -143,7 +143,7 @@ This is appropriate for SML source text because: (a) the lexer must handle arbit
 ./campaign/analytics.sh <campaign-name> --interval 300   # every 5 minutes
 
 # The CSV can be plotted to visualise saturation:
-# timestamp, unix_time, edges_found, delta_edges, execs_per_sec, unique_crashes
+# timestamp, unix_time, edges_found, delta_edges, total_execs, execs_per_sec, unique_crashes, unique_hangs
 ```
 
 Saturation is declared when fewer than 10 new edges are discovered per hour for 3 consecutive hours. The event is logged to `analytics/saturation.log`.
