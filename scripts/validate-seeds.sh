@@ -30,7 +30,7 @@ CRASHED=0
 
 # Find all .sml and .ML files in seeds/
 while IFS= read -r -d '' seed_file; do
-    ((TOTAL++))
+    TOTAL=$((TOTAL + 1))
 
     # Get relative path for display
     rel_path="${seed_file#$PROJECT_ROOT/}"
@@ -38,21 +38,21 @@ while IFS= read -r -d '' seed_file; do
     # Run Poly/ML with timeout
     if timeout 5 "$POLY_BIN" < "$seed_file" > /dev/null 2>&1; then
         echo -e "${GREEN}  [ok] $rel_path${NC}"
-        ((PASSED++))
+        PASSED=$((PASSED + 1))
     else
         EXIT_CODE=$?
         if [ $EXIT_CODE -eq 124 ]; then
             # Timeout
             echo -e "${YELLOW}  [timeout] $rel_path (timeout)${NC}"
-            ((FAILED++))
+            FAILED=$((FAILED + 1))
         elif [ $EXIT_CODE -gt 128 ]; then
             # Crash (signal)
             echo -e "${RED}  [FAIL] $rel_path (crashed with signal $((EXIT_CODE - 128)))${NC}"
-            ((CRASHED++))
+            CRASHED=$((CRASHED + 1))
         else
             # Normal error (parse error is OK for some seeds)
             echo -e "${YELLOW}  ~ $rel_path (parse error - may be intentional)${NC}"
-            ((PASSED++))
+            PASSED=$((PASSED + 1))
         fi
     fi
 

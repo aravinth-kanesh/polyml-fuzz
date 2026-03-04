@@ -88,13 +88,13 @@ The single expected timeout is a known stress seed that exceeds the validation t
 
 The 69 seeds are split into two subsets aligned with the phased campaign strategy:
 
-### Subset A -- Phase 1 (Lexer-focused, ~33 seeds)
+### Subset A: Phase 1 (Lexer-focused, ~33 seeds)
 
 Categories: `basic/`, `operators/`, `edge-cases/`, `regression/`
 
 These seeds exercise lexer tokenisation: identifiers, operators, literals, nested comments, and boundary values. Programs are short with limited parse depth, designed to stress the C++ lexer runtime.
 
-### Subset B -- Phase 2 (Parser-focused, ~36 seeds)
+### Subset B: Phase 2 (Parser-focused, ~36 seeds)
 
 Categories: `stress/`, `modules/`, `datatypes/`
 

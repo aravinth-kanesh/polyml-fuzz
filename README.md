@@ -86,7 +86,7 @@ The campaign is structured as two sequential 3-4 day runs, each targeting a diff
 - Stop early if saturation occurs before the scheduled end
 - Compare lexer-focused vs parser-focused coverage between phases
 
-### Phase 1 -- Lexer / Simple Programs (3-4 days)
+### Phase 1: Lexer Focus (3-4 days)
 
 **Corpus subset A:** `basic/`, `operators/`, `edge-cases/`, `regression/` (~33 seeds)
 
@@ -103,7 +103,7 @@ These seeds exercise lexer tokenisation: identifiers, operators, literals, neste
 watch -n 30 ./campaign/monitor.sh phase1-YYYYMMDD-HHMMSS
 ```
 
-### Phase 2 -- Parser / Complex Programs (3-4 days, conditional)
+### Phase 2: Parser Focus (3-4 days, conditional)
 
 **Corpus subset B:** `stress/`, `modules/`, `datatypes/` (~36 seeds)
 

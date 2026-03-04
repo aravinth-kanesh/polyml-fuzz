@@ -10,20 +10,20 @@
 ## Infrastructure
 
 ### Build Scripts
-- [x] `scripts/build-polyml.sh` -- Automated instrumented build
-- [x] `scripts/build-harness.sh` -- Harness compilation
-- [x] `scripts/verify-build.sh` -- Instrumentation verification
-- [x] `scripts/validate-seeds.sh` -- Seed corpus validation
-- [x] `scripts/ec2-setup.sh` -- AWS Graviton setup
+- [x] `scripts/build-polyml.sh`: automated instrumented build
+- [x] `scripts/build-harness.sh`: harness compilation
+- [x] `scripts/verify-build.sh`: instrumentation verification
+- [x] `scripts/validate-seeds.sh`: seed corpus validation
+- [x] `scripts/ec2-setup.sh`: AWS Graviton setup
 
 ### Campaign Scripts
-- [x] `campaign/launch.sh` -- Phased campaign launcher (Phase 1 / Phase 2, configurable duration)
-- [x] `campaign/monitor.sh` -- Live coverage/crash dashboard with edges/hour
-- [x] `campaign/analytics.sh` -- Saturation tracking (edges/hour -> CSV)
-- [x] `campaign/collect-crashes.sh` -- Crash collection and minimisation
-- [x] `campaign/triage.sh` -- Crash reproduction and classification
-- [x] `campaign/reproduce-crash.sh` -- UC2: standalone crash reproduction
-- [x] `campaign/report.sh` -- Post-campaign Markdown summary report
+- [x] `campaign/launch.sh`: phased campaign launcher (Phase 1 / Phase 2, configurable duration)
+- [x] `campaign/monitor.sh`: live coverage/crash dashboard with edges/hour
+- [x] `campaign/analytics.sh`: saturation tracking (edges/hour to CSV)
+- [x] `campaign/collect-crashes.sh`: crash collection and minimisation
+- [x] `campaign/triage.sh`: crash reproduction and classification
+- [x] `campaign/reproduce-crash.sh`: standalone crash reproduction
+- [x] `campaign/report.sh`: post-campaign Markdown summary report
 
 ### Seed Corpus (COMPLETE)
 - [x] `seeds/basic/` (12 seeds)
@@ -51,7 +51,7 @@
 
 ## Known Bug in Harness (Fixed)
 
-The original `campaign/launch.sh` passed `@@` to the harness, but the harness reads from stdin (`__AFL_LOOP` + `read(STDIN_FILENO,...)`). This has been corrected -- the updated script passes no `@@`.
+The original `campaign/launch.sh` passed `@@` to the harness, but the harness reads from stdin. This has been corrected and the updated script passes no `@@`.
 
 ## Campaign Strategy Alignment (Updated per Supervisor Feedback)
 

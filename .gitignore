@@ -22,6 +22,7 @@ out/
 harness/harness
 harness/harness_afl
 harness/input.sml
+input.sml
 
 # Campaign results (except early-findings)
 results/campaign-*/

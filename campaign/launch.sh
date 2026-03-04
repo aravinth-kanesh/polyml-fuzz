@@ -33,6 +33,10 @@ SEEDS_DIR="${PROJECT_ROOT}/seeds"
 HARNESS="${PROJECT_ROOT}/harness/harness_afl"
 RESULTS_DIR="${PROJECT_ROOT}/results"
 LOG_DIR="${PROJECT_ROOT}/logs"
+POLY_BIN="${PROJECT_ROOT}/build/polyml-instrumented/install/bin"
+
+# Ensure poly is findable when the harness calls system("poly < input.sml")
+export PATH="${POLY_BIN}:${PATH}"
 
 # Colours
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'

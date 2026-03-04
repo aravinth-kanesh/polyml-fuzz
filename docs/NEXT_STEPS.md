@@ -3,23 +3,23 @@
 ## What Is Complete
 
 ### Infrastructure
-- `scripts/build-polyml.sh` -- Automated instrumented build
-- `scripts/build-harness.sh` -- AFL++ harness compilation
-- `scripts/verify-build.sh` -- Instrumentation verification
-- `scripts/validate-seeds.sh` -- Seed corpus validation
-- `scripts/ec2-setup.sh` -- AWS Graviton setup
+- `scripts/build-polyml.sh`: automated instrumented build
+- `scripts/build-harness.sh`: AFL++ harness compilation
+- `scripts/verify-build.sh`: instrumentation verification
+- `scripts/validate-seeds.sh`: seed corpus validation
+- `scripts/ec2-setup.sh`: AWS Graviton setup
 
 ### Campaign Scripts
-- `campaign/launch.sh` -- Phased campaign launcher (Phase 1 / Phase 2)
-- `campaign/monitor.sh` -- Live coverage and crash dashboard
-- `campaign/analytics.sh` -- Edges/hour logging and saturation detection
-- `campaign/collect-crashes.sh` -- Crash collection and minimisation
-- `campaign/triage.sh` -- Crash reproduction and classification
-- `campaign/reproduce-crash.sh` -- UC2: standalone crash reproduction
-- `campaign/report.sh` -- Post-campaign summary report
+- `campaign/launch.sh`: phased campaign launcher (Phase 1 / Phase 2)
+- `campaign/monitor.sh`: live coverage and crash dashboard
+- `campaign/analytics.sh`: edges/hour logging and saturation detection
+- `campaign/collect-crashes.sh`: crash collection and minimisation
+- `campaign/triage.sh`: crash reproduction and classification
+- `campaign/reproduce-crash.sh`: standalone crash reproduction
+- `campaign/report.sh`: post-campaign summary report
 
 ### Seed Corpus (COMPLETE)
-- **69 seeds** across 7 categories -- target of 50+ exceeded
+- **69 seeds** across 7 categories (target: 50+ exceeded)
 - Subset A (lexer-focused): basic, operators, edge-cases, regression (~33 seeds)
 - Subset B (parser-focused): stress, modules, datatypes (~36 seeds)
 
@@ -50,10 +50,10 @@ tmux new -s phase1
 # Launch Phase 1 (3 days = 259200 seconds)
 ./campaign/launch.sh --phase 1 --duration 259200 --instances 4
 
-# In a second pane -- track saturation
+# In a second pane: track saturation
 ./campaign/analytics.sh phase1-YYYYMMDD-HHMMSS
 
-# In a third pane -- live dashboard
+# In a third pane: live dashboard
 watch -n 30 ./campaign/monitor.sh phase1-YYYYMMDD-HHMMSS
 ```
 
@@ -83,7 +83,7 @@ Only run if Phase 1 was productive (non-trivial crashes or coverage).
 - Exec/sec > 1000 (ideally 2000+ on Graviton)
 - Coverage growth in first 24-48 hours
 - Crashes discovered (any type is useful)
-- Saturation detected -- confirms thorough exploration
+- Saturation detected (confirms thorough exploration)
 
 ### Saturation is the goal
 Coverage saturation (tracked by `analytics.sh`) tells you when the campaign has exhausted reachable edges. This is the key measurement for your evaluation chapter.
@@ -97,7 +97,7 @@ Coverage saturation (tracked by `analytics.sh`) tells you when the campaign has 
 | c7g.xlarge | 4 | ~$0.14 | ~$20 |
 | c7g.2xlarge | 8 | ~$0.29 | ~$42 |
 
-**Recommended: c7g.xlarge** -- 4 vCPUs matches 4 fuzzer instances, leaves ample budget for a second phase.
+**Recommended: c7g.xlarge.** 4 vCPUs matches 4 fuzzer instances and leaves ample budget for a second phase.
 
 ---
 

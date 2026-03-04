@@ -39,12 +39,12 @@ The seeds are designed to trigger common compiler bugs:
 
 Seeds are split into two subsets aligned with the phased campaign:
 
-**Subset A -- Phase 1 (Lexer-focused):** `basic/`, `operators/`, `edge-cases/`, `regression/`
+**Subset A: Phase 1 (Lexer-focused):** `basic/`, `operators/`, `edge-cases/`, `regression/`
 
 - Targets lexer tokenisation: identifiers, operators, literals, nested comments, boundary values
 - Short programs with limited parse depth to stress the C++ lexer runtime
 
-**Subset B -- Phase 2 (Parser-focused):** `stress/`, `modules/`, `datatypes/`
+**Subset B: Phase 2 (Parser-focused):** `stress/`, `modules/`, `datatypes/`
 
 - Targets the parser with deeply nested structures, module hierarchies, complex types, functor applications
 - Only run if Phase 1 produces meaningful results
