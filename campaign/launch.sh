@@ -30,13 +30,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 SEEDS_DIR="${PROJECT_ROOT}/seeds"
-HARNESS="${PROJECT_ROOT}/harness/harness_afl"
+POLY="${PROJECT_ROOT}/build/polyml-instrumented/install/bin/poly"
 RESULTS_DIR="${PROJECT_ROOT}/results"
 LOG_DIR="${PROJECT_ROOT}/logs"
-POLY_BIN="${PROJECT_ROOT}/build/polyml-instrumented/install/bin"
-
-# Ensure poly is findable when the harness calls system("poly < input.sml")
-export PATH="${POLY_BIN}:${PATH}"
 
 # Colours
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
@@ -80,15 +76,17 @@ SUBSET_B_DIRS=("stress" "modules" "datatypes")
 
 if [[ "$PHASE" == "1" ]]; then
     CORPUS_DIRS=("${SUBSET_A_DIRS[@]}")
-    PHASE_DESC="Phase 1 -- Subset A (lexer: basic, operators, edge-cases, regression)"
+    PHASE_DESC="Phase 1: Subset A (lexer: basic, operators, edge-cases, regression)"
+    PHASE_LABEL="lexer"
 else
     CORPUS_DIRS=("${SUBSET_B_DIRS[@]}")
-    PHASE_DESC="Phase 2 -- Subset B (parser: stress, modules, datatypes)"
+    PHASE_DESC="Phase 2: Subset B (parser: stress, modules, datatypes)"
+    PHASE_LABEL="parser"
 fi
 
-# Campaign naming
+# Campaign naming: phase1-lexer-YYYYMMDD-HHMMSS / phase2-parser-YYYYMMDD-HHMMSS
 if [[ -z "$CAMPAIGN_NAME" ]]; then
-    CAMPAIGN_NAME="phase${PHASE}-$(date +%Y%m%d-%H%M%S)"
+    CAMPAIGN_NAME="phase${PHASE}-${PHASE_LABEL}-$(date +%Y%m%d-%H%M%S)"
 fi
 OUTPUT_DIR="${RESULTS_DIR}/${CAMPAIGN_NAME}"
 CORPUS_DIR="${OUTPUT_DIR}/corpus"  # Assembled subset corpus
@@ -112,9 +110,9 @@ else
 fi
 echo ""
 
-if [[ ! -f "$HARNESS" ]]; then
-    echo -e "${RED}[!] Harness not found: $HARNESS${NC}"
-    echo -e "${YELLOW}    Build it first: ./scripts/build-harness.sh${NC}"
+if [[ ! -f "$POLY" ]]; then
+    echo -e "${RED}[!] Poly/ML binary not found: $POLY${NC}"
+    echo -e "${YELLOW}    Build it first: ./scripts/build-polyml.sh${NC}"
     exit 1
 fi
 
@@ -172,15 +170,15 @@ START_DATE=$(date)
     echo "instances=$INSTANCES"
     echo "seed_count=$SEED_COUNT"
     echo "corpus_dirs=${CORPUS_DIRS[*]}"
-    echo "harness=$HARNESS"
+    echo "poly=$POLY"
 } > "${OUTPUT_DIR}/campaign.meta"
 
 # Pre-launch sanity check
 echo -e "${GREEN}[*] Pre-launch sanity check...${NC}"
-if ! timeout 15 "$HARNESS" < "${CORPUS_DIR}/$(ls "$CORPUS_DIR" | head -1)" > /dev/null 2>&1; then
-    echo -e "${YELLOW}[!] Harness smoke test failed -- proceeding anyway (may be normal)${NC}"
+if ! timeout 15 "$POLY" < "${CORPUS_DIR}/$(ls "$CORPUS_DIR" | head -1)" > /dev/null 2>&1; then
+    echo -e "${YELLOW}[!] Poly/ML smoke test failed -- proceeding anyway (may be normal)${NC}"
 else
-    echo -e "${GREEN}[ok] Harness responds to input${NC}"
+    echo -e "${GREEN}[ok] Poly/ML responds to input${NC}"
 fi
 echo ""
 
@@ -201,9 +199,9 @@ launch_fuzzer() {
             "$role_flag" "$name"
             -t "$TIMEOUT"
             -m none
-            -- "$HARNESS"
+            -- "$POLY"
     )
-    # Note: no @@ -- harness reads from stdin (AFL++ persistent mode)
+    # Direct fuzzing: poly reads SML from stdin; AFL++ tracks coverage inside poly
 
     if [[ "$DURATION" -gt 0 ]]; then
         timeout --signal=SIGTERM "$DURATION" "${afl_cmd[@]}" \
