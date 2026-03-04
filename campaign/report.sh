@@ -35,12 +35,19 @@ fi
 
 echo -e "${GREEN}[*] Generating report for campaign: $CAMPAIGN_NAME${NC}"
 
-# Read campaign metadata
-PHASE=""; START_TIME=""; START_DATE=""; END_TIME=""; DURATION=""
-INSTANCES=""; SEED_COUNT=""; CORPUS_DIRS=""
+# Read campaign metadata (parsed safely -- do not source, values may contain spaces)
+phase=""; START_TIME=""; start_date=""; END_TIME=""; duration=""
+instances=""; seed_count=""; corpus_dirs=""
 
 if [[ -f "$META_FILE" ]]; then
-    source "$META_FILE"
+    phase=$(grep '^phase='       "$META_FILE" | cut -d= -f2-)
+    START_TIME=$(grep '^start_time=' "$META_FILE" | cut -d= -f2-)
+    start_date=$(grep '^start_date=' "$META_FILE" | cut -d= -f2-)
+    END_TIME=$(grep '^end_time='    "$META_FILE" | cut -d= -f2-)
+    duration=$(grep '^duration='   "$META_FILE" | cut -d= -f2-)
+    instances=$(grep '^instances='  "$META_FILE" | cut -d= -f2-)
+    seed_count=$(grep '^seed_count=' "$META_FILE" | cut -d= -f2-)
+    corpus_dirs=$(grep '^corpus_dirs=' "$META_FILE" | cut -d= -f2-)
 fi
 
 # Compute elapsed time
