@@ -45,7 +45,7 @@ for fuzzer_dir in "$CAMPAIGN_DIR"/fuzzer*/crashes; do
             if [ -f "$crash_file" ] && [ "$(basename "$crash_file")" != "README.txt" ]; then
                 CRASH_NAME=$(basename "$crash_file")
                 cp "$crash_file" "$CRASHES_OUTPUT/${FUZZER_NAME}_${CRASH_NAME}"
-                ((TOTAL_CRASHES++))
+                TOTAL_CRASHES=$((TOTAL_CRASHES + 1))
             fi
         done
     fi
@@ -60,7 +60,8 @@ if command -v afl-tmin &> /dev/null; then
     MINIMISED_DIR="$CRASHES_OUTPUT/minimised"
     mkdir -p "$MINIMISED_DIR"
 
-    HARNESS="${PROJECT_ROOT}/harness/harness_afl"
+    # afl-tmin must use the same target that was fuzzed: poly directly (stdin-based)
+    POLY="${PROJECT_ROOT}/build/polyml-instrumented/install/bin/poly"
 
     for crash_file in "$CRASHES_OUTPUT"/*; do
         if [ -f "$crash_file" ] && [[ ! "$crash_file" =~ /minimised/ ]]; then
@@ -70,7 +71,7 @@ if command -v afl-tmin &> /dev/null; then
             timeout 60 afl-tmin \
                 -i "$crash_file" \
                 -o "$MINIMISED_DIR/$CRASH_NAME" \
-                -- "$HARNESS" 2>/dev/null || {
+                -- "$POLY" 2>/dev/null || {
                     echo -e "${YELLOW}    (minimisation failed or timed out, keeping original)${NC}"
                     cp "$crash_file" "$MINIMISED_DIR/$CRASH_NAME"
                 }

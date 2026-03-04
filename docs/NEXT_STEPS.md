@@ -51,10 +51,10 @@ tmux new -s phase1
 ./campaign/launch.sh --phase 1 --duration 259200 --instances 4
 
 # In a second pane: track saturation
-./campaign/analytics.sh phase1-YYYYMMDD-HHMMSS
+./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
 
 # In a third pane: live dashboard
-watch -n 30 ./campaign/monitor.sh phase1-YYYYMMDD-HHMMSS
+watch -n 30 ./campaign/monitor.sh phase1-lexer-YYYYMMDD-HHMMSS
 ```
 
 Stop early if `analytics.sh` reports saturation (< 10 new edges/hour for 3 consecutive hours).
@@ -62,9 +62,9 @@ Stop early if `analytics.sh` reports saturation (< 10 new edges/hour for 3 conse
 ### Step 3: Post-Phase 1 Analysis
 
 ```bash
-./campaign/collect-crashes.sh phase1-YYYYMMDD-HHMMSS
-./campaign/triage.sh phase1-YYYYMMDD-HHMMSS
-./campaign/report.sh phase1-YYYYMMDD-HHMMSS
+./campaign/collect-crashes.sh phase1-lexer-YYYYMMDD-HHMMSS
+./campaign/triage.sh phase1-lexer-YYYYMMDD-HHMMSS
+./campaign/report.sh phase1-lexer-YYYYMMDD-HHMMSS
 ```
 
 ### Step 4: Phase 2 Campaign (3-4 days, Subset B)

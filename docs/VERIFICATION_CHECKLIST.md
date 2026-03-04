@@ -49,9 +49,13 @@
 - [x] Documented as pre-campaign finding
 - [x] Regression seeds in `seeds/regression/`
 
-## Known Bug in Harness (Fixed)
+## Direct Fuzzing (Architecture Change)
 
-The original `campaign/launch.sh` passed `@@` to the harness, but the harness reads from stdin. This has been corrected and the updated script passes no `@@`.
+`campaign/launch.sh` fuzzes `poly` directly (`-- poly`), not the harness wrapper.
+The harness called `system("poly < input.sml")` which spawned poly as a child process -- AFL++ could
+only track coverage inside the harness binary itself, not inside poly's C/C++ runtime.
+Direct fuzzing fixes this. The harness binary (`harness/harness_afl`) is kept for reference.
+`collect-crashes.sh` uses `poly` for `afl-tmin` minimisation accordingly.
 
 ## Campaign Strategy Alignment (Updated per Supervisor Feedback)
 
@@ -73,4 +77,4 @@ The original `campaign/launch.sh` passed `@@` to the harness, but the harness re
 
 ---
 
-**Date Verified:** February 2026
+**Date Verified:** March 2026

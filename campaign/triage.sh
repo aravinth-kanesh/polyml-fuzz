@@ -45,7 +45,7 @@ for crash_file in "$CRASHES_DIR"/*; do
         continue
     fi
 
-    ((CRASH_COUNT++))
+    CRASH_COUNT=$((CRASH_COUNT + 1))
     CRASH_NAME=$(basename "$crash_file")
 
     echo -e "${BLUE}[$CRASH_COUNT] Reproducing: $CRASH_NAME${NC}"

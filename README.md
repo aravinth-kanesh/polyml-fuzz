@@ -97,10 +97,10 @@ These seeds exercise lexer tokenisation: identifiers, operators, literals, neste
 ./campaign/launch.sh --phase 1 --duration 259200 --instances 4
 
 # In a second terminal -- track coverage saturation hourly
-./campaign/analytics.sh phase1-YYYYMMDD-HHMMSS
+./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
 
 # Live dashboard (refresh every 30 seconds)
-watch -n 30 ./campaign/monitor.sh phase1-YYYYMMDD-HHMMSS
+watch -n 30 ./campaign/monitor.sh phase1-lexer-YYYYMMDD-HHMMSS
 ```
 
 ### Phase 2: Parser Focus (3-4 days, conditional)
@@ -239,4 +239,4 @@ Supervisors: Dr. Karine Even Mendoza, Dr. Mohammad Ahmad Abdulaziz Ali Mansour
 ---
 
 **Status:** Ready for AWS campaign
-**Last Updated:** February 2026
+**Last Updated:** March 2026
