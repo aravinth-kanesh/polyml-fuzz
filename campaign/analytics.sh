@@ -120,7 +120,9 @@ aggregate_metrics() {
         # Use the maximum edge count across fuzzers (AFL++ syncs corpus, not bitmaps)
         [[ "${edges:-0}" -gt "$total_edges" ]] && total_edges="${edges:-0}"
         total_crashes=$(( total_crashes + ${crashes:-0} ))
-        total_execs_per_sec=$(( total_execs_per_sec + ${execs_ps:-0} ))
+        # execs_per_sec is a float in plot_data -- strip decimal before integer arithmetic
+        local execs_int; execs_int="${execs_ps%%.*}"
+        total_execs_per_sec=$(( total_execs_per_sec + ${execs_int:-0} ))
         (( fuzzer_count++ )) || true
     done
 
