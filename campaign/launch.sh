@@ -31,6 +31,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 SEEDS_DIR="${PROJECT_ROOT}/seeds"
 POLY="${PROJECT_ROOT}/build/polyml-instrumented/install/bin/poly"
+
+# Add AFL++ to PATH if not already there (needed in fresh Docker containers)
+if [[ -d "${PROJECT_ROOT}/AFLplusplus" ]]; then
+    export PATH="${PROJECT_ROOT}/AFLplusplus:${PATH}"
+fi
 RESULTS_DIR="${PROJECT_ROOT}/results"
 LOG_DIR="${PROJECT_ROOT}/logs"
 
