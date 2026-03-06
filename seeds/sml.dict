@@ -1,0 +1,110 @@
+# SML token dictionary for AFL++
+# AFL++ uses these as building blocks during mutation (havoc stage).
+# Keyword and operator tokens help AFL++ produce syntactically meaningful
+# inputs, reaching deeper parser paths than pure byte-flip mutations.
+#
+# Format: "token" or label="token"
+# Reference: AFL++ docs/fuzzing_in_depth.md
+
+# Core keywords
+kw_fun="fun"
+kw_val="val"
+kw_let="let"
+kw_in="in"
+kw_end="end"
+kw_if="if"
+kw_then="then"
+kw_else="else"
+kw_case="case"
+kw_of="of"
+kw_fn="fn"
+kw_rec="rec"
+kw_and="and"
+kw_andalso="andalso"
+kw_orelse="orelse"
+kw_not="not"
+kw_do="do"
+kw_while="while"
+kw_op="op"
+
+# Type system keywords
+kw_type="type"
+kw_datatype="datatype"
+kw_abstype="abstype"
+kw_with="with"
+kw_withtype="withtype"
+kw_exception="exception"
+
+# Exception handling
+kw_raise="raise"
+kw_handle="handle"
+
+# Module system keywords
+kw_structure="structure"
+kw_signature="signature"
+kw_functor="functor"
+kw_sig="sig"
+kw_struct="struct"
+kw_open="open"
+kw_local="local"
+kw_include="include"
+kw_sharing="sharing"
+kw_where="where"
+
+# Fixity declarations
+kw_infix="infix"
+kw_infixr="infixr"
+kw_nonfix="nonfix"
+
+# Built-in values
+kw_true="true"
+kw_false="false"
+kw_nil="nil"
+kw_ref="ref"
+
+# Multi-character operators (single chars found by bit-flip; these need dictionary)
+op_arrow="=>"
+op_darrow="->"
+op_le="<="
+op_ge=">="
+op_ne="<>"
+op_assign=":="
+op_cons="::"
+op_concat="^"
+op_deref="!"
+op_append="@"
+op_compose="o"
+
+# Comment delimiters -- critical for lexer testing
+comment_open="(*"
+comment_close="*)"
+
+# Nested comment stress
+nested_comment="(* (* *) *)"
+
+# String and character delimiters
+str_escape="\\"
+char_prefix="#\""
+
+# Common SML idioms that exercise parser paths
+idiom_fn="fn x =>"
+idiom_case="case x of"
+idiom_handle="handle _ =>"
+idiom_let="let val"
+idiom_struct="structure S = struct"
+idiom_sig="signature S = sig"
+idiom_datatype="datatype t ="
+idiom_type_ann=" : int"
+idiom_tuple=" * "
+idiom_list="[1, 2, 3]"
+idiom_wildcard=" _ "
+idiom_ellipsis="..."
+
+# Type constructors commonly used
+type_int="int"
+type_string="string"
+type_bool="bool"
+type_unit="unit"
+type_list="list"
+type_option="option"
+type_ref="ref"

@@ -2,8 +2,8 @@
 # launch.sh -- Launch a structured Poly/ML fuzzing campaign
 #
 # Usage:
-#   ./campaign/launch.sh --phase 1 [--duration SECONDS] [--instances N] [--name NAME]
-#   ./campaign/launch.sh --phase 2 [--duration SECONDS] [--instances N] [--name NAME]
+#   ./campaign/launch.sh --phase 1 [--duration SECONDS] [--instances N] [--name NAME] [--use-evolved]
+#   ./campaign/launch.sh --phase 2 [--duration SECONDS] [--instances N] [--name NAME] [--use-evolved]
 #
 # Phase 1 uses Subset A corpus: basic/, operators/, edge-cases/, regression/
 #   Focus: lexer tokens -- identifiers, operators, literals, comments, boundary values
@@ -22,8 +22,13 @@
 #   - Havoc: random stacked mutations
 #   These are appropriate for structured text (SML source) without a grammar mutator.
 #
+# Flags:
+#   --use-evolved   Supplement seeds with evolved corpus from seeds/evolved/
+#                   Populated by scripts/prepare-evolved-seeds.sh after a trial campaign.
+#                   Gives the real campaign a head start on interesting mutations.
+#
 # Example:
-#   ./campaign/launch.sh --phase 1 --duration 259200 --instances 4
+#   ./campaign/launch.sh --phase 1 --duration 259200 --instances 4 --use-evolved
 
 set -euo pipefail
 
@@ -31,6 +36,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 SEEDS_DIR="${PROJECT_ROOT}/seeds"
 POLY="${PROJECT_ROOT}/build/polyml-instrumented/install/bin/poly"
+DICT_FILE="${PROJECT_ROOT}/seeds/sml.dict"
+EVOLVED_SEEDS_DIR="${PROJECT_ROOT}/seeds/evolved"
 
 # Add AFL++ to PATH if not already there (needed in fresh Docker containers)
 if [[ -d "${PROJECT_ROOT}/AFLplusplus" ]]; then
@@ -47,14 +54,16 @@ PHASE=""
 DURATION=259200          # 3 days in seconds
 INSTANCES=4              # Matches AWS c7g.xlarge (4 vCPU)
 CAMPAIGN_NAME=""
+USE_EVOLVED=0
 
 # Argument parsing
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --phase)     PHASE="$2";         shift 2 ;;
-        --duration)  DURATION="$2";      shift 2 ;;
-        --instances) INSTANCES="$2";     shift 2 ;;
-        --name)      CAMPAIGN_NAME="$2"; shift 2 ;;
+        --phase)       PHASE="$2";         shift 2 ;;
+        --duration)    DURATION="$2";      shift 2 ;;
+        --instances)   INSTANCES="$2";     shift 2 ;;
+        --name)        CAMPAIGN_NAME="$2"; shift 2 ;;
+        --use-evolved) USE_EVOLVED=1;      shift   ;;
         -h|--help)
             sed -n '2,20p' "$0" | sed 's/^# \?//'
             exit 0 ;;
@@ -142,6 +151,20 @@ done
 if [[ "$SEED_COUNT" -eq 0 ]]; then
     echo -e "${RED}[!] No seeds found for Phase $PHASE corpus${NC}"; exit 1
 fi
+
+# Optionally supplement with evolved corpus from prior trial campaigns
+if [[ "$USE_EVOLVED" -eq 1 ]]; then
+    if [[ -d "$EVOLVED_SEEDS_DIR" ]] && [[ -n "$(ls -A "$EVOLVED_SEEDS_DIR" 2>/dev/null)" ]]; then
+        EVOLVED_COUNT=$(find "$EVOLVED_SEEDS_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')
+        cp "$EVOLVED_SEEDS_DIR"/* "$CORPUS_DIR/"
+        echo -e "  ${GREEN}[ok]${NC} evolved/ (${EVOLVED_COUNT} evolved seeds from prior campaigns)"
+        SEED_COUNT=$(( SEED_COUNT + EVOLVED_COUNT ))
+    else
+        echo -e "  ${YELLOW}[!]${NC} --use-evolved set but seeds/evolved/ is empty or missing"
+        echo -e "       Run: ./scripts/prepare-evolved-seeds.sh <campaign-name>"
+    fi
+fi
+
 echo -e "${GREEN}[*] Total corpus: $SEED_COUNT seeds${NC}"
 echo ""
 
@@ -194,7 +217,8 @@ declare -a FUZZER_PIDS=()
 
 launch_fuzzer() {
     local name="$1"
-    local role_flag="$2"  # "-M" for main, "-S" for secondary
+    local role_flag="$2"   # "-M" for main, "-S" for secondary
+    local schedule="$3"    # power schedule: "explore" for main, "fast" for secondaries
     local run_log="${LOG_DIR}/${CAMPAIGN_NAME}-${name}.log"
 
     local afl_cmd=(
@@ -202,10 +226,18 @@ launch_fuzzer() {
             -i "$CORPUS_DIR"
             -o "$OUTPUT_DIR"
             "$role_flag" "$name"
+            -p "$schedule"
             -t "$TIMEOUT"
             -m none
-            -- "$POLY"
+            -a text        # SML source is ASCII text; prevents binary byte insertion
     )
+
+    # SML token dictionary: helps AFL++ produce syntactically meaningful mutations
+    if [[ -f "$DICT_FILE" ]]; then
+        afl_cmd+=(-x "$DICT_FILE")
+    fi
+
+    afl_cmd+=(-- "$POLY")
     # Direct fuzzing: poly reads SML from stdin; AFL++ tracks coverage inside poly
 
     if [[ "$DURATION" -gt 0 ]]; then
@@ -219,13 +251,13 @@ launch_fuzzer() {
     echo -e "  ${GREEN}[ok]${NC} $name (PID ${FUZZER_PIDS[-1]}) -> $run_log"
 }
 
-# Main fuzzer (synchronises corpus across all instances)
-launch_fuzzer "fuzzer01" "-M"
+# Main fuzzer: explore schedule maximises coverage breadth
+launch_fuzzer "fuzzer01" "-M" "explore"
 sleep 3  # Let main fuzzer initialise before secondaries connect
 
-# Secondary fuzzers (read from main's queue)
+# Secondary fuzzers: fast schedule maximises throughput
 for i in $(seq 2 "$INSTANCES"); do
-    launch_fuzzer "$(printf "fuzzer%02d" "$i")" "-S"
+    launch_fuzzer "$(printf "fuzzer%02d" "$i")" "-S" "fast"
     sleep 1
 done
 

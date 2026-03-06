@@ -84,6 +84,13 @@ Expected output: **68 pass, 1 timeout, 0 crashes**
 Any seed that crashes poly should be moved to `regression/` and documented in `results/early-findings/`.
 The single expected timeout is a known stress seed that exceeds the validation time limit.
 
+## Dictionary File (`sml.dict`)
+
+`seeds/sml.dict` is an AFL++ token dictionary containing SML keywords, operators,
+and common idioms. It is not a seed -- AFL++ uses it during the havoc mutation stage
+to substitute known SML tokens, producing mutations more likely to survive lexical
+analysis. `launch.sh` picks it up automatically via `-x seeds/sml.dict`.
+
 ## Seed Corpus Strategy
 
 The 69 seeds are split into two subsets aligned with the phased campaign strategy:

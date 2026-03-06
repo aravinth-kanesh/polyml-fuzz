@@ -24,6 +24,10 @@ harness/harness_afl
 harness/input.sml
 input.sml
 
+# Evolved and trimmed seed artefacts (generated, not source-controlled)
+seeds/evolved/
+seeds/originals/
+
 # Campaign results (except early-findings)
 results/campaign-*/
 results/*-test/
