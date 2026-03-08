@@ -49,8 +49,8 @@ polyml-fuzz/
 ```
 
 **External dependencies** (clone separately during setup):
-- `AFLplusplus/` -- [github.com/AFLplusplus/AFLplusplus](https://github.com/AFLplusplus/AFLplusplus)
-- `polyml-src/` -- [github.com/polyml/polyml](https://github.com/polyml/polyml)
+- `AFLplusplus/` - [github.com/AFLplusplus/AFLplusplus](https://github.com/AFLplusplus/AFLplusplus)
+- `polyml-src/` - [github.com/polyml/polyml](https://github.com/polyml/polyml)
 
 ## Setup on AWS Graviton
 
@@ -187,7 +187,7 @@ ls results/<campaign>/triaged/*.summary
 
 Bugs found during initial manual testing and infrastructure validation are documented separately in `results/early-findings/`. These are labelled as **pre-fuzzing campaign** findings and are not counted as campaign results, but are reported in the dissertation.
 
-**ub1/** -- UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (factorial and simple datatype). This is an ARM64-specific bug.
+**ub1/** - UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (factorial and simple datatype). This is an ARM64-specific bug.
 
 ## Troubleshooting
 
@@ -208,28 +208,10 @@ Validate seeds first:
 
 ## Project Goals
 
-1. Build instrumented Poly/ML on ARM64 -- **COMPLETE**
-2. Create reusable coverage-guided fuzzing framework -- **COMPLETE**
-3. Curated seed corpus of 69 SML programs -- **COMPLETE**
-4. Run Phase 1 campaign (3-4 days, Subset A) -- pending
-5. Run Phase 2 campaign (3-4 days, Subset B) -- pending (conditional)
-6. Analyse crashes and report findings -- pending
-7. Establish reliability baseline for Poly/ML on ARM64 -- pending
-
-## References
-
-- [Poly/ML](https://polyml.org)
-- [AFL++](https://github.com/AFLplusplus/AFLplusplus)
-- [AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html)
-- [UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html)
-
-## Contact
-
-Author: Aravinth Kaneshalingam
-Project: BSc Final Year Project, King's College London
-Supervisors: Dr. Karine Even Mendoza, Dr. Mohammad Ahmad Abdulaziz Ali Mansour
-
----
-
-**Status:** Ready for AWS campaign
-**Last Updated:** March 2026
+1. Build instrumented Poly/ML on ARM64 - **COMPLETE**
+2. Create reusable coverage-guided fuzzing framework - **COMPLETE**
+3. Curated seed corpus of 69 SML programs - **COMPLETE**
+4. Run Phase 1 campaign (3-4 days, Subset A) - pending
+5. Run Phase 2 campaign (3-4 days, Subset B) - pending (conditional)
+6. Analyse crashes and report findings - pending
+7. Establish reliability baseline for Poly/ML on ARM64 - pending
