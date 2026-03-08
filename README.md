@@ -17,15 +17,15 @@ This repository contains a coverage-guided fuzzing framework for testing the Pol
 ```
 polyml-fuzz/
 |-- harness/
-|   \-- main.c                    # Initial harness design (reference only -- not used)
-|-- seeds/                         # Seed corpus (69 SML programs)
+|   |-- main.c                    # Initial harness design (reference only -- not used)
+|-- seeds/                        # Seed corpus (69 SML programs)
 |   |-- basic/                    # Core language features               (12 seeds)
 |   |-- datatypes/                # Algebraic datatypes and patterns     (11 seeds)
 |   |-- modules/                  # Structures, signatures, functors     (12 seeds)
 |   |-- operators/                # Infix/precedence stress tests        (11 seeds)
 |   |-- edge-cases/               # Lexer boundary and comment cases     ( 8 seeds)
 |   |-- stress/                   # Deep nesting and complexity          (13 seeds)
-|   \-- regression/               # Known UBSan-triggering seeds         ( 2 seeds)
+|   |-- regression/               # Known UBSan-triggering seeds         ( 2 seeds)
 |-- scripts/
 |   |-- build-polyml.sh           # Build instrumented Poly/ML
 |   |-- build-harness.sh          # Build harness (reference only -- not used in campaigns)
@@ -33,7 +33,7 @@ polyml-fuzz/
 |   |-- validate-seeds.sh         # Test all seeds parse correctly
 |   |-- trim-seeds.sh             # Minimise large seeds with afl-tmin (run on AWS)
 |   |-- prepare-evolved-seeds.sh  # Extract trial corpus for --use-evolved
-|   \-- ec2-setup.sh              # AWS Graviton instance setup
+|   |-- ec2-setup.sh              # AWS Graviton instance setup
 |-- campaign/
 |   |-- launch.sh                 # Start phased fuzzing campaign
 |   |-- monitor.sh                # Live coverage/crash dashboard
@@ -41,11 +41,11 @@ polyml-fuzz/
 |   |-- collect-crashes.sh        # Gather and minimise crashes
 |   |-- triage.sh                 # Reproduce and classify crashes
 |   |-- reproduce-crash.sh        # Standalone crash reproduction
-|   \-- report.sh                 # Post-campaign summary report
+|   |-- report.sh                 # Post-campaign summary report
 |-- results/
-|   \-- early-findings/           # Bugs found before main campaign
-|-- docs/                          # Supporting documentation
-\-- build/                        # Build outputs (gitignored)
+|   |-- early-findings/           # Bugs found before main campaign
+|-- docs/                         # Supporting documentation
+|-- build/                        # Build outputs (gitignored)
 ```
 
 **External dependencies** (clone separately during setup):
