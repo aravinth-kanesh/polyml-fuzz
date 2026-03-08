@@ -8,6 +8,7 @@ build/
 # External dependencies (clone separately — see README)
 AFLplusplus/
 polyml-src/
+report/
 
 # AFL++ / Fuzzing outputs
 out/
