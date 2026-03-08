@@ -123,10 +123,10 @@ AFL++ applies the following transformations to raw SML byte sequences:
 
 | Mutator      | Description |
 |--------------|-------------|
-| Bit/byte flip | Flips individual bits or bytes -- corrupts token characters |
-| Arithmetic   | Adds/subtracts small values -- targets integer literals |
+| Bit/byte flip | Flips individual bits or bytes - corrupts token characters |
+| Arithmetic   | Adds/subtracts small values - targets integer literals |
 | Interesting  | Substitutes boundary values (0, MAX_INT, -1) |
-| Splice       | Recombines two corpus entries -- creates syntactically hybrid inputs |
+| Splice       | Recombines two corpus entries - creates syntactically hybrid inputs |
 | Havoc        | Stacks random mutations from the above set |
 
 In addition, an SML token dictionary (`seeds/sml.dict`) is passed to AFL++ via `-x`, supplementing havoc with syntactically meaningful keyword and operator substitutions. The `-a text` flag biases mutations towards printable ASCII, reducing wasted executions on inputs that fail at tokenisation.
