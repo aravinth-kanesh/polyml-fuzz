@@ -1,10 +1,18 @@
-// main.c -- AFL++ persistent-mode harness for Poly/ML
+// main.c -- AFL++ persistent-mode harness for Poly/ML (reference only, not used)
+//
+// NOTE: This harness is NOT used by the fuzzing campaigns. It is retained as a
+// record of the initial design. The campaigns fuzz the instrumented poly binary
+// directly (see campaign/launch.sh).
+//
+// Why this approach was abandoned:
+//   This harness invokes poly via system("poly < input.sml"), which spawns poly
+//   as a child process. AFL++ cannot track edge coverage inside a child process
+//   launched with system(), so coverage feedback was limited to the ~12 edges in
+//   this harness itself -- not the lexer or parser code we care about. Switching
+//   to direct fuzzing of the poly binary gives full coverage of libpolyml/.
 //
 // Build with:
 //   afl-clang-fast -Wall -Wextra -O2 -fsanitize=address,undefined -o harness_afl main.c
-//
-// Run with (no @@ -- input is via stdin):
-//   afl-fuzz -i seeds -o results/<campaign> -- ./harness_afl
 //
 // This harness:
 //  - runs in AFL++ persistent mode (__AFL_LOOP)

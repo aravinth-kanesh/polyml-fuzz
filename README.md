@@ -17,7 +17,7 @@ This repository contains a coverage-guided fuzzing framework for testing the Pol
 ```
 polyml-fuzz/
 |-- harness/
-|   \-- main.c                    # AFL++ persistent-mode harness
+|   \-- main.c                    # Initial harness design (reference only -- not used)
 |-- seeds/                         # Seed corpus (69 SML programs)
 |   |-- basic/                    # Core language features               (12 seeds)
 |   |-- datatypes/                # Algebraic datatypes and patterns     (11 seeds)
@@ -28,9 +28,11 @@ polyml-fuzz/
 |   \-- regression/               # Known UBSan-triggering seeds         ( 2 seeds)
 |-- scripts/
 |   |-- build-polyml.sh           # Build instrumented Poly/ML
-|   |-- build-harness.sh          # Build AFL++ harness
+|   |-- build-harness.sh          # Build harness (reference only -- not used in campaigns)
 |   |-- verify-build.sh           # Verify instrumentation
 |   |-- validate-seeds.sh         # Test all seeds parse correctly
+|   |-- trim-seeds.sh             # Minimise large seeds with afl-tmin (run on AWS)
+|   |-- prepare-evolved-seeds.sh  # Extract trial corpus for --use-evolved
 |   \-- ec2-setup.sh              # AWS Graviton instance setup
 |-- campaign/
 |   |-- launch.sh                 # Start phased fuzzing campaign
@@ -68,10 +70,7 @@ git clone https://github.com/polyml/polyml.git polyml-src
 # 5. Build instrumented Poly/ML
 ./scripts/build-polyml.sh
 
-# 6. Build AFL++ harness
-./scripts/build-harness.sh
-
-# 7. Verify everything works
+# 6. Verify everything works
 ./scripts/verify-build.sh
 
 # 8. Validate seed corpus (should show 68 pass, 1 timeout, 0 crashes)
@@ -120,7 +119,7 @@ Stop a phase early if `analytics.sh` reports coverage saturation (fewer than 10 
 
 ## AFL++ Mutators
 
-AFL++ is used with its **default mutation strategy** (no custom grammar mutator), which applies the following transformations to raw SML byte sequences:
+AFL++ applies the following transformations to raw SML byte sequences:
 
 | Mutator      | Description |
 |--------------|-------------|
@@ -130,7 +129,7 @@ AFL++ is used with its **default mutation strategy** (no custom grammar mutator)
 | Splice       | Recombines two corpus entries -- creates syntactically hybrid inputs |
 | Havoc        | Stacks random mutations from the above set |
 
-This is appropriate for SML source text because: (a) the lexer must handle arbitrary byte sequences, and (b) even syntactically invalid inputs exercise error-handling paths in the frontend runtime.
+In addition, an SML token dictionary (`seeds/sml.dict`) is passed to AFL++ via `-x`, supplementing havoc with syntactically meaningful keyword and operator substitutions. The `-a text` flag biases mutations towards printable ASCII, reducing wasted executions on inputs that fail at tokenisation.
 
 ## Analytics: Tracking Coverage Saturation
 
@@ -201,12 +200,6 @@ cd AFLplusplus && make distclean && make
 **shmget() failures on macOS**
 macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected -- run campaigns on AWS Graviton (Linux) only.
 
-**Harness smoke test fails**
-Rebuild the harness after a clean Poly/ML build:
-```bash
-./scripts/build-harness.sh
-```
-
 **Fuzzers show 0 exec/sec**
 Validate seeds first:
 ```bash
@@ -216,7 +209,7 @@ Validate seeds first:
 ## Project Goals
 
 1. Build instrumented Poly/ML on ARM64 -- **COMPLETE**
-2. Create reusable fuzzing harness -- **COMPLETE**
+2. Create reusable coverage-guided fuzzing framework -- **COMPLETE**
 3. Curated seed corpus of 69 SML programs -- **COMPLETE**
 4. Run Phase 1 campaign (3-4 days, Subset A) -- pending
 5. Run Phase 2 campaign (3-4 days, Subset B) -- pending (conditional)
