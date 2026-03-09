@@ -1,10 +1,13 @@
 # Smoke Test Findings
 
-**Date:** 2026-03-09
+**Date:** 09/03/2026
+
 **Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 4 vCPU, 8 GB RAM)
-**Campaign:** phase1-lexer-20260309-200503
+
 **Duration:** 30 minutes (1800 seconds)
+
 **Instances:** 4 AFL++ fuzzer instances
+
 **Corpus:** Subset A (35 seeds: basic/, operators/, edge-cases/, regression/)
 
 ---
