@@ -139,7 +139,7 @@ polyml-fuzz/
 |-- results/                [DONE] early-findings preserved
 |-- docs/                   [DONE] Supporting documentation (4 files)
 |-- polyml-src/             (external dependency, gitignored)
-\-- AFLplusplus/            (external dependency, gitignored)
+|-- AFLplusplus/            (external dependency, gitignored)
 ```
 
 **Unnecessary files removed:**

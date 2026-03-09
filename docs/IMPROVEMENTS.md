@@ -15,7 +15,7 @@ without requiring a full grammar-aware mutator.
 The dictionary (`seeds/sml.dict`) contains:
 - 30 SML keywords (`fun`, `val`, `datatype`, `signature`, `functor`, etc.)
 - Multi-character operators (`=>`, `->`, `<=`, `>=`, `<>`, `:=`, `::`)
-- Comment delimiters (`(*`, `*)`) -- important for lexer stress testing
+- Comment delimiters (`(*`, `*)`) - important for lexer stress testing
 - Common idioms (`fn x =>`, `case x of`, `datatype t =`)
 - Built-in type names (`int`, `string`, `bool`, `list`, `option`)
 
@@ -51,9 +51,9 @@ budget) is assigned to each corpus entry. Running all instances with the same
 schedule wastes the opportunity to explore different strategies in parallel.
 
 The real campaigns use:
-- `fuzzer01` (main): `-p explore` -- prioritises corpus entries with lower
+- `fuzzer01` (main): `-p explore` - prioritises corpus entries with lower
   coverage, maximising breadth of edges found
-- `fuzzer02..N` (secondaries): `-p fast` -- prioritises recently discovered
+- `fuzzer02..N` (secondaries): `-p fast` - prioritises recently discovered
   entries, maximising throughput on promising paths
 
 These complement each other: the main fuzzer broadens coverage while secondaries
@@ -82,7 +82,7 @@ Usage (run on AWS Graviton after setup, before the real campaign):
 
 Originals are backed up to `seeds/originals/` before trimming. Seeds that cannot
 be trimmed (e.g. poly times out on them) are kept unchanged. Run on AWS rather than
-Docker/macOS -- afl-tmin under ARM emulation is too slow to be practical on 20+ seeds.
+Docker/macOS - afl-tmin under ARM emulation is too slow to be practical on 20+ seeds.
 
 For Chapter 5: seed files larger than 1,500 bytes were minimised using `afl-tmin`
 prior to the real campaigns, reducing input size while preserving the AFL++ coverage
@@ -128,5 +128,5 @@ the original seeds alone.
 | Seed trimming            | `scripts/trim-seeds.sh`              | Medium | On AWS, before campaign |
 | Evolved corpus seeding   | `scripts/prepare-evolved-seeds.sh`   | High   | After trial campaigns   |
 
-The first three are automatic -- no extra steps needed when running `launch.sh`.
+The first three are automatic - no extra steps needed when running `launch.sh`.
 The last two require running the respective scripts before the real campaign starts.

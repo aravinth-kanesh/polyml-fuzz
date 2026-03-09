@@ -37,22 +37,22 @@
 
 ## Documentation
 
-- [x] `README.md` -- Setup guide and campaign strategy
-- [x] `docs/NEXT_STEPS.md` -- Campaign roadmap
-- [x] `docs/PROJECT_ALIGNMENT.md` -- Brief/report alignment analysis
-- [x] `docs/SEED_CORPUS_COMPLETE.md` -- Seed corpus documentation
-- [x] `docs/VERIFICATION_CHECKLIST.md` -- This file
+- [x] `README.md` - Setup guide and campaign strategy
+- [x] `docs/NEXT_STEPS.md` - Campaign roadmap
+- [x] `docs/PROJECT_ALIGNMENT.md` - Brief/report alignment analysis
+- [x] `docs/SEED_CORPUS_COMPLETE.md` - Seed corpus documentation
+- [x] `docs/VERIFICATION_CHECKLIST.md` - This file
 
 ## Early Findings
 
-- [x] `results/early-findings/ub1/` -- UBSan bug in `arm64.cpp:246`
+- [x] `results/early-findings/ub1/` - UBSan bug in `arm64.cpp:246`
 - [x] Documented as pre-campaign finding
 - [x] Regression seeds in `seeds/regression/`
 
 ## Direct Fuzzing (Architecture Change)
 
 `campaign/launch.sh` fuzzes `poly` directly (`-- poly`), not the harness wrapper.
-The harness called `system("poly < input.sml")` which spawned poly as a child process -- AFL++ could
+The harness called `system("poly < input.sml")` which spawned poly as a child process - AFL++ could
 only track coverage inside the harness binary itself, not inside poly's C/C++ runtime.
 Direct fuzzing fixes this. The harness binary (`harness/harness_afl`) is kept for reference.
 `collect-crashes.sh` uses `poly` for `afl-tmin` minimisation accordingly.
