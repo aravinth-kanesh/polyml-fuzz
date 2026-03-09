@@ -50,12 +50,28 @@ sudo apt-get install -y \
     llvm-15 \
     git \
     wget \
-    autoconf \
     automake \
     libtool \
     libgmp-dev \
     tmux \
-    htop
+    htop \
+    m4
+
+# Install autoconf 2.72 from source (Ubuntu 22.04 ships 2.71; Poly/ML requires 2.72+)
+AUTOCONF_VERSION=$(autoconf --version 2>/dev/null | head -1 | grep -oP '\d+\.\d+' | head -1 || echo "0.0")
+AUTOCONF_MAJOR=$(echo "$AUTOCONF_VERSION" | cut -d. -f1)
+AUTOCONF_MINOR=$(echo "$AUTOCONF_VERSION" | cut -d. -f2)
+if [ "$AUTOCONF_MAJOR" -lt 2 ] || { [ "$AUTOCONF_MAJOR" -eq 2 ] && [ "$AUTOCONF_MINOR" -lt 72 ]; }; then
+    echo -e "${YELLOW}    autoconf $AUTOCONF_VERSION found -- need 2.72+, building from source...${NC}"
+    AUTOCONF_TMP=$(mktemp -d)
+    wget -q -P "$AUTOCONF_TMP" https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.gz
+    tar xzf "$AUTOCONF_TMP/autoconf-2.72.tar.gz" -C "$AUTOCONF_TMP"
+    (cd "$AUTOCONF_TMP/autoconf-2.72" && ./configure --prefix=/usr/local && make -j$(nproc) && sudo make install)
+    rm -rf "$AUTOCONF_TMP"
+    echo -e "${GREEN}    [ok] autoconf 2.72 installed${NC}"
+else
+    echo -e "${GREEN}    [ok] autoconf $AUTOCONF_VERSION already sufficient${NC}"
+fi
 
 # Verify clang-15 installed successfully -- without it AFL++ LTO mode won't work
 if ! command -v clang-15 &>/dev/null; then
