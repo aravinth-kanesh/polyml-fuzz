@@ -1,12 +1,8 @@
 # Trial Fuzzing Campaign Findings
-**Poly/ML Fuzzing Framework - Pre-Campaign Trials**
-Aravinth Kaneshalingam | King's College London | March 2026
-
----
 
 ## Overview
 
-Three trial fuzzing runs were conducted on an Apple Silicon M1 (ARM64, macOS) development machine
+Three trial fuzzing runs were conducted on an Apple Silicon M2 (ARM64, macOS) development machine
 prior to the main AWS Graviton campaigns. The goals were to validate the toolchain, characterise
 coverage growth behaviour, and estimate throughput. A significant design issue was identified and
 resolved during Trial 1, resulting in a change to the fuzzing architecture.
@@ -168,7 +164,7 @@ The trials confirm that the fuzzing infrastructure is correctly configured for t
 | AFL++ correctly receives coverage feedback from `libpolyml/` | Confirmed |
 | ASan/UBSan runtime instrumentation active | Confirmed (ub1 finding) |
 | Coverage saturation detection working | Confirmed (saturation logged correctly in both trials) |
-| Throughput on ARM64 | ~1,000 exec/sec on Apple M1 (local); higher expected on Graviton |
+| Throughput on ARM64 | ~1,000 exec/sec on Apple M2 (local); higher expected on Graviton |
 | Corpus evolution (seed promotion) | Confirmed (33 seeds → 627 evolved in Phase 1) |
 
 ---
@@ -183,7 +179,7 @@ The trials confirm that the fuzzing infrastructure is correctly configured for t
   the limited exploration possible in a short window with 2 instances; a 72-hour run with 4
   instances on Graviton will explore a much larger fraction of the reachable edge space.
 - **Throughput expectation:** Graviton c7g instances typically achieve 20-40% higher throughput
-  than Apple M1 for compute-bound workloads. An exec/sec of 1,200-1,500 is a reasonable estimate
+  than Apple M2 for compute-bound workloads. An exec/sec of 1,200-1,500 is a reasonable estimate
   for the main campaign.
 - **Instances:** Main campaign uses 4 instances (1 main + 3 secondary), doubling the trial
   configuration.
