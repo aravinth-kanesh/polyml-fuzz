@@ -28,7 +28,7 @@ polyml-fuzz/
 |   |-- regression/               # Known UBSan-triggering seeds         ( 2 seeds)
 |-- scripts/
 |   |-- build-polyml.sh           # Build instrumented Poly/ML
-|   |-- build-harness.sh          # Build harness (reference only -- not used in campaigns)
+|   |-- build-harness.sh          # Build harness (reference only - not used in campaigns)
 |   |-- verify-build.sh           # Verify instrumentation
 |   |-- validate-seeds.sh         # Test all seeds parse correctly
 |   |-- trim-seeds.sh             # Minimise large seeds with afl-tmin (run on AWS)
@@ -198,7 +198,8 @@ cd AFLplusplus && make distclean && make
 ```
 
 **shmget() failures on macOS**
-macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected -- run campaigns on AWS Graviton (Linux) only.
+
+macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected - run campaigns on AWS Graviton (Linux) only.
 
 **Fuzzers show 0 exec/sec**
 Validate seeds first:
