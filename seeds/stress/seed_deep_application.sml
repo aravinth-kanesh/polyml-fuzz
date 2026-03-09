@@ -1,9 +1,4 @@
-(* seed_deep_application.sml
-   Deeply nested function applications to stress the parser's recursive
-   descent stack. Unlike the existing deep-nesting seeds (which nest let/if),
-   this exercises the expression parser's call chain reduction path.
-   Each fi applies its argument twice, creating exponential call depth via
-   repeated composition without exceeding a reasonable source size. *)
+(* Deep function application chains to stress the parser's call chain reduction *)
 
 fun f0 x = x + 1;
 fun f1 x = f0 (f0 x);

@@ -1,12 +1,4 @@
-(* seed_parser_recovery.sml
-   Exercises error-recovery paths in the Poly/ML parser and lexer.
-   Unlike the rest of the corpus (which is valid SML), this file contains
-   intentional syntax errors interleaved with valid declarations. The parser
-   must skip, resynchronise, and continue after each error. These paths are
-   never exercised by valid seeds, making this a high-value mutation base.
-
-   Expected behaviour: Poly/ML prints error messages and continues; it does
-   NOT crash. Any crash or sanitiser report on this input is a finding. *)
+(* Parser error-recovery: valid SML with commented-out syntax errors as mutation base *)
 
 (* Valid preamble so the parser has context before errors begin *)
 val preamble = 42;

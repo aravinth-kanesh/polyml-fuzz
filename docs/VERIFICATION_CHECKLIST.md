@@ -30,9 +30,9 @@
 - [x] `seeds/datatypes/` (11 seeds)
 - [x] `seeds/modules/` (12 seeds)
 - [x] `seeds/operators/` (11 seeds)
-- [x] `seeds/stress/` (13 seeds)
-- [x] `seeds/edge-cases/` (8 seeds)
-- [x] `seeds/regression/` (2 seeds)
+- [x] `seeds/stress/` (14 seeds)
+- [x] `seeds/edge-cases/` (9 seeds)
+- [x] `seeds/regression/` (3 seeds)
 - [x] `seeds/README.md`
 
 ## Documentation
@@ -70,7 +70,7 @@ Direct fuzzing fixes this. The harness binary (`harness/harness_afl`) is kept fo
 
 ## Statistics
 
-- **Total Seeds:** 69 (target: 50+ exceeded)
+- **Total Seeds:** 72 (target: 50+ exceeded)
 - **Campaign Scripts:** 7
 - **Build/Validation Scripts:** 5
 - **Documentation:** 5 markdown files

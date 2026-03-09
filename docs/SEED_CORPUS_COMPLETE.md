@@ -2,11 +2,11 @@
 
 **Date:** January 30, 2026
 **Status:** [DONE] COMPLETE
-**Total Seeds:** 69 (Target: 50+)
+**Total Seeds:** 72 (Target: 50+)
 
 ## Summary
 
-A comprehensive seed corpus of 69 strategically designed Standard ML programs has been created to bootstrap the AFL++ fuzzing campaign. The corpus is organised into 7 categories covering all major language features and includes specific stress tests designed to find parser and lexer bugs.
+A comprehensive seed corpus of 72 strategically designed Standard ML programs has been created to bootstrap the AFL++ fuzzing campaign. The corpus is organised into 7 categories covering all major language features and includes specific stress tests designed to find parser and lexer bugs.
 
 ## Seed Distribution
 
@@ -16,10 +16,10 @@ A comprehensive seed corpus of 69 strategically designed Standard ML programs ha
 | datatypes/ | 11 | Type system stress (ADTs, records, pattern matching, polymorphic types) |
 | modules/ | 12 | Module system (structures, signatures, functors, sharing constraints) |
 | operators/ | 11 | Operator parsing (precedence, associativity, fixity, overloading) |
-| stress/ | 13 | Pathological cases (deep nesting, long identifiers, complex expressions) |
-| edge-cases/ | 8 | Boundary conditions (ambiguous syntax, unicode, lexer edge cases) |
-| regression/ | 2 | Known UBSan triggers from early testing |
-| **TOTAL** | **69** | **Comprehensive coverage** |
+| stress/ | 14 | Pathological cases (deep nesting, long identifiers, complex expressions) |
+| edge-cases/ | 9 | Boundary conditions (ambiguous syntax, unicode, lexer edge cases) |
+| regression/ | 3 | Known UBSan triggers and parser error-recovery paths |
+| **TOTAL** | **72** | **Comprehensive coverage** |
 
 ## Strategic Design
 
@@ -80,7 +80,7 @@ Seeds are split into two subsets aligned with the phased campaign:
    ```bash
    ./scripts/validate-seeds.sh
    ```
-   Expected: 68 pass, 1 timeout, 0 crashes.
+   Expected: 71 pass, 1 timeout, 0 crashes.
 
 3. **Build harness:**
    ```bash
@@ -99,7 +99,7 @@ Seeds are split into two subsets aligned with the phased campaign:
 
 ### Expected Results
 
-With 69 high-quality seeds and AFL++'s mutation strategies:
+With 72 high-quality seeds and AFL++'s mutation strategies:
 
 - **Coverage:** Expect to reach 70-80% of reachable frontend edges within 24 hours
 - **Crashes:** Likely 5-20 unique crashes per phase (based on similar compiler fuzzing campaigns)
@@ -119,6 +119,6 @@ Crashes will be triaged into:
 
 Validation has been completed. Run `./scripts/validate-seeds.sh` to confirm:
 
-- **Expected:** 68 pass, 1 timeout, 0 crashes
+- **Expected:** 71 pass, 1 timeout, 0 crashes
 
 Any seed that crashes Poly/ML during validation is a bug candidate and should be minimised and reported.

@@ -25,8 +25,8 @@ This document verifies alignment between:
 **Status:** [DONE] **COMPLETE & READY**
 - `campaign/launch.sh` - Multi-core fuzzing campaign launcher
 - `campaign/monitor.sh` - Progress tracking
-- **Seed corpus: 69 seeds across 7 categories (target: 50+ [DONE] ACHIEVED)**
-- Strategic coverage: basic (12), datatypes (11), modules (12), operators (11), stress (13), edge-cases (8), regression (2)
+- **Seed corpus: 72 seeds across 7 categories (target: 50+ [DONE] ACHIEVED)**
+- Strategic coverage: basic (12), datatypes (11), modules (12), operators (11), stress (14), edge-cases (9), regression (3)
 - **Report:** Chapter 3.9 defines experimental protocol
 
 ### 3. Code Coverage Comparison
@@ -133,7 +133,7 @@ polyml-fuzz/
 |-- .gitignore              [DONE] Added
 |-- README.md               [DONE] Complete setup guide
 |-- harness/                [DONE] main.c (cleaned, no temp files)
-|-- seeds/                  [DONE] 69 seeds across 7 categories + README
+|-- seeds/                  [DONE] 72 seeds across 7 categories + README
 |-- scripts/                [DONE] 5 build/validation scripts + utils/
 |-- campaign/               [DONE] 7 scripts (launch, monitor, analytics, collect, triage, reproduce, report)
 |-- results/                [DONE] early-findings preserved
@@ -175,7 +175,7 @@ polyml-fuzz/
 ### Areas Needing Attention [NOTE]
 
 1. ~~**Seed Corpus Expansion**~~ [DONE] **COMPLETE**
-   - [DONE] Current: **69 seeds** (Target: 50+ **ACHIEVED**)
+   - [DONE] Current: **72 seeds** (Target: 50+ **ACHIEVED**)
    - [DONE] Strategic distribution across 7 categories
    - [DONE] Pathological cases for bug discovery included
    - See: [SEED_CORPUS_COMPLETE.md](SEED_CORPUS_COMPLETE.md) for details
@@ -198,7 +198,7 @@ polyml-fuzz/
 
 ### For Submission
 
-1. ~~**Expand seed corpus to 50+**~~ [DONE] **COMPLETE** (69 seeds created, cleaned, verified)
+1. ~~**Expand seed corpus to 50+**~~ [DONE] **COMPLETE** (72 seeds created, cleaned, verified)
 2. **Run phased campaign on AWS Graviton** (Phase 1: 3-4 days Subset A, Phase 2: 3-4 days Subset B)
 3. **In final report evaluation:**
    - Compare coverage: before fuzzing (0%) vs after fuzzing (my results)

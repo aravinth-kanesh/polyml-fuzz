@@ -18,14 +18,14 @@ This repository contains a coverage-guided fuzzing framework for testing the Pol
 polyml-fuzz/
 |-- harness/
 |   |-- main.c                    # Initial harness design (reference only -- not used)
-|-- seeds/                        # Seed corpus (69 SML programs)
+|-- seeds/                        # Seed corpus (72 SML programs)
 |   |-- basic/                    # Core language features               (12 seeds)
 |   |-- datatypes/                # Algebraic datatypes and patterns     (11 seeds)
 |   |-- modules/                  # Structures, signatures, functors     (12 seeds)
 |   |-- operators/                # Infix/precedence stress tests        (11 seeds)
-|   |-- edge-cases/               # Lexer boundary and comment cases     ( 8 seeds)
-|   |-- stress/                   # Deep nesting and complexity          (13 seeds)
-|   |-- regression/               # Known UBSan-triggering seeds         ( 2 seeds)
+|   |-- edge-cases/               # Lexer boundary and comment cases     ( 9 seeds)
+|   |-- stress/                   # Deep nesting and complexity          (14 seeds)
+|   |-- regression/               # Known UBSan-triggering seeds         ( 3 seeds)
 |-- scripts/
 |   |-- build-polyml.sh           # Build instrumented Poly/ML
 |   |-- build-harness.sh          # Build harness (reference only - not used in campaigns)
@@ -73,7 +73,7 @@ git clone https://github.com/polyml/polyml.git polyml-src
 # 6. Verify everything works
 ./scripts/verify-build.sh
 
-# 8. Validate seed corpus (should show 68 pass, 1 timeout, 0 crashes)
+# 8. Validate seed corpus (should show 71 pass, 1 timeout, 0 crashes)
 ./scripts/validate-seeds.sh
 ```
 
@@ -213,7 +213,7 @@ Validate seeds first to confirm the binary and seeds are working:
 
 1. Build instrumented Poly/ML on ARM64 - **COMPLETE**
 2. Create reusable coverage-guided fuzzing framework - **COMPLETE**
-3. Curated seed corpus of 69 SML programs - **COMPLETE**
+3. Curated seed corpus of 72 SML programs - **COMPLETE**
 4. Run Phase 1 campaign (3-4 days, Subset A) - pending
 5. Run Phase 2 campaign (3-4 days, Subset B) - pending (conditional)
 6. Analyse crashes and report findings - pending

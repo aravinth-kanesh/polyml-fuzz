@@ -19,8 +19,8 @@
 - `campaign/report.sh`: post-campaign summary report
 
 ### Seed Corpus (COMPLETE)
-- **69 seeds** across 7 categories (target: 50+ exceeded)
-- Subset A (lexer-focused): basic, operators, edge-cases, regression (~33 seeds)
+- **72 seeds** across 7 categories (target: 50+ exceeded)
+- Subset A (lexer-focused): basic, operators, edge-cases, regression (~36 seeds)
 - Subset B (parser-focused): stress, modules, datatypes (~36 seeds)
 
 ### Early Findings

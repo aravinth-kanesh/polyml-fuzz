@@ -1,9 +1,4 @@
-(* seed_numeric_literals.sml
-   Exercises the lexer's numeric literal tokenisation paths: word (0w),
-   hexadecimal (0x), real/float, negation (~), and scientific notation.
-   These token types are absent from most other seeds, so AFL++ mutations
-   without dictionary hints rarely reach them. Pairs with the 0w/0x/~
-   entries added to sml.dict. *)
+(* Numeric literal tokenisation: word (0w), hex (0x), real, scientific notation, negation (~) *)
 
 (* Word literals (non-negative integers with 0w prefix) *)
 val w0 : word = 0w0;
