@@ -70,7 +70,7 @@ The following bugs were discovered during setup and corrected before the smoke t
 The ARM64 Linux pipeline is fully operational. Key validation criteria met:
 
 - AFL++ instrumentation confirmed active in poly binary (`__afl_area_ptr` present)
-- Coverage feedback working (1,229 edges found in 30 minutes)
+- Coverage feedback working (1,932 edges found in 30 minutes)
 - Exec/sec within expected range for a virtualised ARM64 environment
 - Seed corpus loading and mutation operating correctly
 - Analytics CSV logging functioning
