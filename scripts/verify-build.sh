@@ -41,11 +41,13 @@ fi
 # This is the critical check -- if poly isn't instrumented, all coverage data is zero
 echo -e "${YELLOW}[3/6] Checking AFL++ instrumentation in poly binary...${NC}"
 POLY_INSTRUMENTED=0
-if strings "$POLY_BIN" 2>/dev/null | grep -q "__afl_area_ptr"; then
+if strings "$POLY_BIN" 2>/dev/null | grep -qF "__afl_area_ptr"; then
     POLY_INSTRUMENTED=1
-elif nm "$POLY_BIN" 2>/dev/null | grep -q "__afl"; then
+elif strings "$POLY_BIN" 2>/dev/null | grep -qF "__afl_trace"; then
     POLY_INSTRUMENTED=1
-elif strings "$POLY_BIN" 2>/dev/null | grep -q "__sanitizer_cov_trace_pc_guard"; then
+elif strings "$POLY_BIN" 2>/dev/null | grep -qF "__sanitizer_cov_trace_pc_guard"; then
+    POLY_INSTRUMENTED=1
+elif nm "$POLY_BIN" 2>/dev/null | grep -qF "__afl"; then
     POLY_INSTRUMENTED=1
 fi
 
