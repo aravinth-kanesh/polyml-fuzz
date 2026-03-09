@@ -202,6 +202,7 @@ cd AFLplusplus && make distclean && make
 macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected - run campaigns on AWS Graviton (Linux) only.
 
 **Fuzzers show 0 exec/sec**
+
 Validate seeds first:
 ```bash
 ./scripts/validate-seeds.sh
