@@ -89,7 +89,7 @@ The campaign is structured as two sequential 3-4 day runs, each targeting a diff
 
 ### Phase 1: Lexer Focus (3-4 days)
 
-**Corpus subset A:** `basic/`, `operators/`, `edge-cases/`, `regression/` (~33 seeds)
+**Corpus subset A:** `basic/`, `operators/`, `edge-cases/`, `regression/` (~35 seeds)
 
 These seeds exercise lexer tokenisation: identifiers, operators, literals, nested comments, boundary values. They are short programs with limited parse depth.
 
@@ -106,7 +106,7 @@ watch -n 30 ./campaign/monitor.sh phase1-lexer-YYYYMMDD-HHMMSS
 
 ### Phase 2: Parser Focus (3-4 days, conditional)
 
-**Corpus subset B:** `stress/`, `modules/`, `datatypes/` (~36 seeds)
+**Corpus subset B:** `stress/`, `modules/`, `datatypes/` (~37 seeds)
 
 These seeds exercise the parser with deeply nested structures, module hierarchies, complex type expressions, and functor applications. Only run Phase 2 if Phase 1 was productive (i.e. showed non-trivial crashes or coverage).
 
