@@ -33,6 +33,17 @@ sudo apt-get upgrade -y
 
 # Install build dependencies
 echo -e "${BLUE}[2/6] Installing build tools...${NC}"
+
+# Add LLVM 15 apt repository so clang-15 is available on Ubuntu 22.04
+# (Ubuntu 22.04 ships clang-13/14 by default; clang-15 requires the LLVM repo)
+if ! apt-cache show clang-15 &>/dev/null; then
+    echo -e "${YELLOW}    clang-15 not in default repos -- adding LLVM apt repository...${NC}"
+    wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm.asc
+    echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main" \
+        | sudo tee /etc/apt/sources.list.d/llvm-15.list
+    sudo apt-get update
+fi
+
 sudo apt-get install -y \
     build-essential \
     clang-15 \
@@ -45,6 +56,15 @@ sudo apt-get install -y \
     libgmp-dev \
     tmux \
     htop
+
+# Verify clang-15 installed successfully -- without it AFL++ LTO mode won't work
+if ! command -v clang-15 &>/dev/null; then
+    echo -e "${RED}[!] clang-15 installation failed -- check apt output above${NC}"
+    echo -e "${YELLOW}    Tip: try 'sudo apt-get install clang' for the default version,${NC}"
+    echo -e "${YELLOW}    then update CC/CXX in build-polyml.sh accordingly.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}    [ok] clang-15 found: $(clang-15 --version | head -1)${NC}"
 
 # Install AFL++
 echo -e "${BLUE}[3/6] Installing AFL++...${NC}"

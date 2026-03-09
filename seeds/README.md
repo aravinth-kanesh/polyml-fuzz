@@ -4,7 +4,7 @@ This directory contains the seed corpus used to bootstrap AFL++ fuzzing. Seeds a
 
 ## Current Status
 
-**Total Seeds:** 69 [DONE] (Target: 50+ **ACHIEVED**)
+**Total Seeds:** 72 (Target: 50+ **ACHIEVED**)
 
 ### Breakdown by Category
 
@@ -12,9 +12,9 @@ This directory contains the seed corpus used to bootstrap AFL++ fuzzing. Seeds a
 - **datatypes/** (11 seeds) - Lists, trees, options, ADTs, pattern matching, records, polymorphic types, mutual recursion
 - **modules/** (12 seeds) - Structures, signatures, functors, opaque ascription, sharing, where type, nested modules
 - **operators/** (11 seeds) - Infix operators, precedence, associativity, overloading, redefinition, composition
-- **stress/** (13 seeds) - Deep nesting, long identifiers, nested comments, large expressions, pathological cases
-- **edge-cases/** (8 seeds) - Ambiguous syntax, boundary values, unicode, operator edge cases, type system edges
-- **regression/** (2 seeds) - Known UBSan-triggering programs from early testing
+- **stress/** (14 seeds) - Deep nesting, long identifiers, nested comments, large expressions, deep function application chains
+- **edge-cases/** (9 seeds) - Ambiguous syntax, boundary values, unicode, operator edge cases, numeric literal formats (word/hex/real)
+- **regression/** (3 seeds) - Known UBSan-triggering programs and parser error-recovery paths
 
 ## Adding More Seeds
 
@@ -79,7 +79,7 @@ Always validate after adding seeds:
 ./scripts/validate-seeds.sh
 ```
 
-Expected output: **68 pass, 1 timeout, 0 crashes**
+Expected output: **71 pass, 1 timeout, 0 crashes**
 
 Any seed that crashes poly should be moved to `regression/` and documented in `results/early-findings/`.
 The single expected timeout is a known stress seed that exceeds the validation time limit.
@@ -93,9 +93,9 @@ analysis. `launch.sh` picks it up automatically via `-x seeds/sml.dict`.
 
 ## Seed Corpus Strategy
 
-The 69 seeds are split into two subsets aligned with the phased campaign strategy:
+The 72 seeds are split into two subsets aligned with the phased campaign strategy:
 
-### Subset A: Phase 1 (Lexer-focused, ~33 seeds)
+### Subset A: Phase 1 (Lexer-focused, ~36 seeds)
 
 Categories: `basic/`, `operators/`, `edge-cases/`, `regression/`
 
@@ -115,5 +115,5 @@ Each seed is hand-crafted to:
 
 ---
 
-**Status:** [DONE] **COMPLETE** (69/50+ target achieved)
-**Last Updated:** February 2026
+**Status:** **COMPLETE** (72/50+ target achieved)
+**Last Updated:** March 2026

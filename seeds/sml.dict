@@ -100,6 +100,20 @@ idiom_list="[1, 2, 3]"
 idiom_wildcard=" _ "
 idiom_ellipsis="..."
 
+# Numeric literal prefixes and formats
+# These are valid SML tokens the lexer must handle; absent from seeds so
+# AFL++ havoc mutations will not naturally generate them without dictionary hints.
+num_word="0w"
+num_word_hex="0wx"
+num_hex="0x"
+num_hex_upper="0X"
+num_real="0.0"
+num_real_exp="1.5e10"
+num_real_neg_exp="1.5e~10"
+num_neg="~1"
+num_neg_real="~0.0"
+num_word_max="0w4294967295"
+
 # Type constructors commonly used
 type_int="int"
 type_string="string"

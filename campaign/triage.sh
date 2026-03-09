@@ -23,11 +23,20 @@ if [ -z "$CAMPAIGN_NAME" ]; then
 fi
 
 CAMPAIGN_DIR="$RESULTS_DIR/$CAMPAIGN_NAME"
-CRASHES_DIR="$CAMPAIGN_DIR/collected-crashes/minimised"
 TRIAGE_DIR="$CAMPAIGN_DIR/triaged"
 
-if [ ! -d "$CRASHES_DIR" ]; then
-    echo -e "${RED}[!] Crashes not found. Run collect-crashes.sh first${NC}"
+# Prefer minimised crashes; fall back to raw collected crashes if minimised/ is absent
+MINIMISED_DIR="$CAMPAIGN_DIR/collected-crashes/minimised"
+COLLECTED_DIR="$CAMPAIGN_DIR/collected-crashes"
+
+if [ -d "$MINIMISED_DIR" ] && [ "$(ls -A "$MINIMISED_DIR" 2>/dev/null)" ]; then
+    CRASHES_DIR="$MINIMISED_DIR"
+    echo -e "${GREEN}[*] Using minimised crashes: $MINIMISED_DIR${NC}"
+elif [ -d "$COLLECTED_DIR" ] && [ "$(ls -A "$COLLECTED_DIR" 2>/dev/null)" ]; then
+    CRASHES_DIR="$COLLECTED_DIR"
+    echo -e "${YELLOW}[!] minimised/ not found -- falling back to raw collected crashes${NC}"
+else
+    echo -e "${RED}[!] No crashes found. Run collect-crashes.sh first${NC}"
     exit 1
 fi
 

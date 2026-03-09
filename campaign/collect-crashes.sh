@@ -34,24 +34,34 @@ echo -e "${GREEN}[*] Collecting crashes from campaign: $CAMPAIGN_NAME${NC}"
 # Create output directory
 mkdir -p "$CRASHES_OUTPUT"
 
-# Collect all crashes
+# Collect all crashes, deduplicating by SHA-256 content hash.
+# Two fuzzers may independently find the same crashing input; keeping one
+# copy avoids inflated crash counts and minimisation collisions.
 TOTAL_CRASHES=0
+TOTAL_DUPES=0
+declare -A SEEN_HASHES
+
 for fuzzer_dir in "$CAMPAIGN_DIR"/fuzzer*/crashes; do
     if [ -d "$fuzzer_dir" ]; then
         FUZZER_NAME=$(basename "$(dirname "$fuzzer_dir")")
 
-        # Copy crashes with fuzzer prefix
         for crash_file in "$fuzzer_dir"/*; do
             if [ -f "$crash_file" ] && [ "$(basename "$crash_file")" != "README.txt" ]; then
-                CRASH_NAME=$(basename "$crash_file")
-                cp "$crash_file" "$CRASHES_OUTPUT/${FUZZER_NAME}_${CRASH_NAME}"
-                TOTAL_CRASHES=$((TOTAL_CRASHES + 1))
+                HASH=$(sha256sum "$crash_file" | cut -d' ' -f1)
+                if [ -n "${SEEN_HASHES[$HASH]+x}" ]; then
+                    TOTAL_DUPES=$((TOTAL_DUPES + 1))
+                else
+                    SEEN_HASHES[$HASH]=1
+                    CRASH_NAME=$(basename "$crash_file")
+                    cp "$crash_file" "$CRASHES_OUTPUT/${FUZZER_NAME}_${CRASH_NAME}"
+                    TOTAL_CRASHES=$((TOTAL_CRASHES + 1))
+                fi
             fi
         done
     fi
 done
 
-echo -e "${GREEN}[*] Collected $TOTAL_CRASHES crash files${NC}"
+echo -e "${GREEN}[*] Collected $TOTAL_CRASHES unique crash files (${TOTAL_DUPES} duplicates removed)${NC}"
 
 # Minimise crashes using AFL++ tmin
 if command -v afl-tmin &> /dev/null; then

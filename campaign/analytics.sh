@@ -90,7 +90,7 @@ parse_plot_data() {
 
     # Extract fields (1-indexed): unix_time=1, map_size=7, saved_crashes=8, execs_per_sec=11
     # Newer AFL++ (>=4.x) adds total_execs=12 and edges_found=13
-    local unix_time map_size saved_crashes execs_per_sec edges_found
+    local unix_time map_size saved_crashes execs_per_sec total_execs edges_found
 
     unix_time=$(    echo "$last_line" | cut -d',' -f1  | tr -d ' ')
     map_size=$(     echo "$last_line" | cut -d',' -f7  | tr -d ' ')
@@ -98,24 +98,24 @@ parse_plot_data() {
     execs_per_sec=$(echo "$last_line" | cut -d',' -f11 | tr -d ' ')
 
     if [[ "$ncols" -ge 13 ]]; then
+        total_execs=$(echo "$last_line" | cut -d',' -f12 | tr -d ' ')
         edges_found=$(echo "$last_line" | cut -d',' -f13 | tr -d ' ')
     else
-        # Older AFL++: map_size is the edges covered (as percentage * total_map)
-        # Use map_size field as edges approximation
+        total_execs=0
         edges_found="$map_size"
     fi
 
-    echo "${unix_time:-0} ${edges_found:-0} ${saved_crashes:-0} ${execs_per_sec:-0} ${map_size:-0}"
+    echo "${unix_time:-0} ${edges_found:-0} ${saved_crashes:-0} ${execs_per_sec:-0} ${map_size:-0} ${total_execs:-0}"
 }
 
 # Helper: aggregate across all fuzzers
 aggregate_metrics() {
-    local total_edges=0 total_crashes=0 total_execs_per_sec=0 fuzzer_count=0
+    local total_edges=0 total_crashes=0 total_execs_per_sec=0 total_execs=0 fuzzer_count=0
 
     for fuzzer_dir in "${CAMPAIGN_DIR}"/fuzzer*/; do
         [[ ! -d "$fuzzer_dir" ]] && continue
         local plot_file="${fuzzer_dir}plot_data"
-        read -r _ edges crashes execs_ps _ <<< "$(parse_plot_data "$plot_file")"
+        read -r _ edges crashes execs_ps _ execs <<< "$(parse_plot_data "$plot_file")"
 
         # Use the maximum edge count across fuzzers (AFL++ syncs corpus, not bitmaps)
         [[ "${edges:-0}" -gt "$total_edges" ]] && total_edges="${edges:-0}"
@@ -123,10 +123,11 @@ aggregate_metrics() {
         # execs_per_sec is a float in plot_data -- strip decimal before integer arithmetic
         local execs_int; execs_int="${execs_ps%%.*}"
         total_execs_per_sec=$(( total_execs_per_sec + ${execs_int:-0} ))
+        total_execs=$(( total_execs + ${execs:-0} ))
         (( fuzzer_count++ )) || true
     done
 
-    echo "$total_edges $total_crashes $total_execs_per_sec $fuzzer_count"
+    echo "$total_edges $total_crashes $total_execs_per_sec $fuzzer_count $total_execs"
 }
 
 # Saturation state tracking
@@ -163,17 +164,17 @@ while true; do
     RUNNING=$(pgrep -f "afl-fuzz.*${CAMPAIGN_NAME}" 2>/dev/null | wc -l | tr -d ' ' || echo 0)
 
     # Aggregate current metrics
-    read -r EDGES CRASHES EXECS_PS FUZZERS <<< "$(aggregate_metrics)"
+    read -r EDGES CRASHES EXECS_PS FUZZERS TOTAL_EXECS <<< "$(aggregate_metrics)"
 
     # Calculate delta
     DELTA=$(( EDGES - PREV_EDGES ))
     PREV_EDGES=$EDGES
 
     # Append to CSV
-    # Columns: timestamp, unix_time, edges_found, delta_edges, total_execs (N/A),
-    #          execs_per_sec, unique_crashes, unique_hangs (N/A)
-    printf "%s,%d,%d,%d,0,%d,%d,0\n" \
-        "$TIMESTAMP" "$NOW" "$EDGES" "$DELTA" "$EXECS_PS" "$CRASHES" \
+    # Columns: timestamp, unix_time, edges_found, delta_edges, total_execs,
+    #          execs_per_sec, unique_crashes, unique_hangs (N/A -- AFL++ doesn't expose per-sample)
+    printf "%s,%d,%d,%d,%d,%d,%d,0\n" \
+        "$TIMESTAMP" "$NOW" "$EDGES" "$DELTA" "${TOTAL_EXECS:-0}" "$EXECS_PS" "$CRASHES" \
         >> "$EDGES_CSV"
 
     # Display snapshot
