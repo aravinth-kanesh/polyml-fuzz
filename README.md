@@ -12,7 +12,7 @@ This repository contains a coverage-guided fuzzing framework for testing the Pol
 
 **Tools:** AFL++, AddressSanitizer, UndefinedBehaviorSanitizer
 
-**Report:** [Final-Year Project Report](https://github.com/aravinth-kanesh/aravinth-kaneshalingam-fyp-report)
+**Report:** [aravinth-kaneshalingam-fyp-report](https://github.com/aravinth-kanesh/aravinth-kaneshalingam-fyp-report)
 
 ## Repository Structure
 
