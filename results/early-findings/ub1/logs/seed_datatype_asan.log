@@ -1,0 +1,12 @@
+../../../polyml-src/libpolyml/arm64.cpp:246:32: runtime error: addition of unsigned offset to 0x00037fff8060 overflowed to 0x00037fff8048
+    #0 0x1057277f8  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x1bb7f8)
+    #1 0x1055b636c  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x4a36c)
+    #2 0x1056ea440  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x17e440)
+    #3 0x1056eb0e0  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x17f0e0)
+    #4 0x1056be9d8  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x1529d8)
+    #5 0x1055dbc94  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x6fc94)
+    #6 0x1056a8b80  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x13cb80)
+    #7 0x105659f1c  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0xedf1c)
+    #8 0x192041d50  (/usr/lib/dyld:arm64e+0x3d50)
+
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior ../../../polyml-src/libpolyml/arm64.cpp:246:32 in 

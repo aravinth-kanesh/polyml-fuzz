@@ -54,8 +54,9 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Logs
+# Logs (exclude campaign/runtime logs, but keep pre-campaign finding logs)
 *.log
+!results/early-findings/**/*.log
 
 # macOS
 .DS_Store

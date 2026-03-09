@@ -1,0 +1,11 @@
+../../../polyml-src/libpolyml/arm64.cpp:246:32: runtime error: addition of unsigned offset to 0x00037fff80e0 overflowed to 0x00037fff80c0
+    #0 0x1058077f8  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x1bb7f8)
+    #1 0x1056a3a18  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x57a18)
+    #2 0x105771860  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x125860)
+    #3 0x1047f6b5c  (/Users/aravinth/.local/polyml-asan/bin/poly:arm64+0x100026b5c)
+    #4 0x10578a7b0  (/Users/aravinth/.local/polyml-asan/lib/libpolyml.16.dylib:arm64+0x13e7b0)
+    #5 0x105a85858  (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/16/lib/darwin/libclang_rt.asan_osx_dynamic.dylib:arm64e+0x51858)
+    #6 0x192400c04  (/usr/lib/system/libsystem_pthread.dylib:arm64e+0x6c04)
+    #7 0x1923fbba4  (/usr/lib/system/libsystem_pthread.dylib:arm64e+0x1ba4)
+
+SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior ../../../polyml-src/libpolyml/arm64.cpp:246:32 in 
