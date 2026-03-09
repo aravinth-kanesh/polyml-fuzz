@@ -21,15 +21,15 @@ fault discovery is expected or claimed from this run.
 
 | Metric | Value |
 |---|---|
-| Edges found (fuzzer01) | 1,229 |
-| Total edges in bitmap | 10,612 |
-| Bitmap coverage | 11.58% |
+| Edges found (all instances) | 1,932 |
+| Bitmap coverage (fuzzer01) | 11.58% |
 | Exec/sec (fuzzer01) | ~632 |
 | Estimated total exec/sec (4 instances) | ~1,916 |
 | Unique crashes | 0 |
 | Unique hangs | 1 (expected -- timeout seed) |
-| Corpus entries evolved | 134 |
-| AFL++ cycles completed | 8 |
+| Corpus entries evolved | 134+ |
+| AFL++ cycles completed | 8+ |
+| Saturation detected | No (30 min insufficient; requires 3h <10 edges/hour) |
 
 ---
 
