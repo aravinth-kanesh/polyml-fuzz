@@ -5,7 +5,9 @@ This directory contains bugs discovered during initial testing before the main f
 ## ub1/ - UBSan Undefined Behaviour
 
 **Date Found:** 2025-12-09
+
 **Severity:** Medium (Undefined Behaviour)
+
 **Status:** Documented, used as regression tests
 
 ### Summary

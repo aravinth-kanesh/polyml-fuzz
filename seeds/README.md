@@ -87,7 +87,7 @@ The single expected timeout is a known stress seed that exceeds the validation t
 ## Dictionary File (`sml.dict`)
 
 `seeds/sml.dict` is an AFL++ token dictionary containing SML keywords, operators,
-and common idioms. It is not a seed -- AFL++ uses it during the havoc mutation stage
+and common idioms. It is not a seed - AFL++ uses it during the havoc mutation stage
 to substitute known SML tokens, producing mutations more likely to survive lexical
 analysis. `launch.sh` picks it up automatically via `-x seeds/sml.dict`.
 
