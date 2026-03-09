@@ -46,7 +46,7 @@ When crashes are discovered during the main campaign:
 
 1. Create a new directory: `results/early-findings/crash-XXX/`
 2. Include:
-   - `inputs/` -- Minimised input files (`*.sml`)
-   - `logs/` -- Sanitiser logs (`*_asan.log`) and exit codes
-   - `notes.txt` -- Reproduction notes
+   - `inputs/` - Minimised input files (`*.sml`)
+   - `logs/` - Sanitiser logs (`*_asan.log`) and exit codes
+   - `notes.txt` - Reproduction notes
 3. If it's a new bug type, add to `seeds/regression/`
