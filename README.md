@@ -19,7 +19,7 @@ This repository contains a coverage-guided fuzzing framework for testing the Pol
 ```
 polyml-fuzz/
 |-- harness/
-|   |-- main.c                    # Initial harness design (reference only -- not used)
+|   |-- main.c                    # Initial harness design (reference only - not used)
 |-- seeds/                        # Seed corpus (72 SML programs)
 |   |-- basic/                    # Core language features               (12 seeds)
 |   |-- datatypes/                # Algebraic datatypes and patterns     (11 seeds)
