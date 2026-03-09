@@ -12,6 +12,8 @@ This repository contains a coverage-guided fuzzing framework for testing the Pol
 
 **Tools:** AFL++, AddressSanitizer, UndefinedBehaviorSanitizer
 
+**Report:** [Final-Year Project Report](https://github.com/aravinth-kanesh/aravinth-kaneshalingam-fyp-report)
+
 ## Repository Structure
 
 ```
@@ -95,7 +97,7 @@ These seeds exercise lexer tokenisation: identifiers, operators, literals, neste
 # Start Phase 1 (3 days = 259200 seconds, 4 instances for c7g.xlarge)
 ./campaign/launch.sh --phase 1 --duration 259200 --instances 4
 
-# In a second terminal -- track coverage saturation hourly
+# In a second terminal - track coverage saturation hourly
 ./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
 
 # Live dashboard (refresh every 30 seconds)
@@ -200,7 +202,7 @@ cd AFLplusplus && make distclean && make
 
 **2. shmget() failures on macOS**
 
-macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected -- run campaigns on AWS Graviton (Linux) only.
+macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected - run campaigns on AWS Graviton (Linux) only.
 
 **3. Fuzzers show 0 exec/sec**
 
