@@ -191,19 +191,20 @@ Bugs found during initial manual testing and infrastructure validation are docum
 
 ## Troubleshooting
 
-**Build fails with "afl-clang-lto not found"**
+**1. Build fails with "afl-clang-lto not found"**
+
+Rebuild AFL++ from source:
 ```bash
-# On AWS Graviton, rebuild AFL++
 cd AFLplusplus && make distclean && make
 ```
 
-**shmget() failures on macOS**
+**2. shmget() failures on macOS**
 
-macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected - run campaigns on AWS Graviton (Linux) only.
+macOS System V shared memory limits prevent AFL++ from running in persistent mode. This is expected -- run campaigns on AWS Graviton (Linux) only.
 
-**Fuzzers show 0 exec/sec**
+**3. Fuzzers show 0 exec/sec**
 
-Validate seeds first:
+Validate seeds first to confirm the binary and seeds are working:
 ```bash
 ./scripts/validate-seeds.sh
 ```
