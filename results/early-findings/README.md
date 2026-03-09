@@ -1,6 +1,14 @@
 # Early Findings
 
-This directory contains bugs discovered during initial testing before the main fuzzing campaign.
+This directory contains bugs and findings discovered during initial testing before the main fuzzing campaign.
+
+## Index
+
+| File | Contents |
+|---|---|
+| `ub1/` | ARM64-specific UBSan unsigned integer overflow in `arm64.cpp:246` |
+| `trial-campaign-findings.md` | Results from three macOS trial runs (harness vs direct fuzzing) |
+| `smoke-test-findings.md` | ARM64 Linux smoke test validation (Ubuntu 22.04 UTM VM, 30 min) |
 
 ## ub1/ - UBSan Undefined Behaviour
 
