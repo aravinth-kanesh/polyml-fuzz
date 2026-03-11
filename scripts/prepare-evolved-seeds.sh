@@ -1,5 +1,5 @@
 #!/bin/bash
-# prepare-evolved-seeds.sh -- Extract interesting evolved inputs from a trial campaign
+# prepare-evolved-seeds.sh: Extract interesting evolved inputs from a trial campaign
 #
 # After a trial campaign, AFL++ has evolved the seed corpus into hundreds of
 # interesting inputs. This script copies the best ones into seeds/evolved/ so

@@ -34,7 +34,7 @@ if [ -d "$MINIMISED_DIR" ] && [ "$(ls -A "$MINIMISED_DIR" 2>/dev/null)" ]; then
     echo -e "${GREEN}[*] Using minimised crashes: $MINIMISED_DIR${NC}"
 elif [ -d "$COLLECTED_DIR" ] && [ "$(ls -A "$COLLECTED_DIR" 2>/dev/null)" ]; then
     CRASHES_DIR="$COLLECTED_DIR"
-    echo -e "${YELLOW}[!] minimised/ not found -- falling back to raw collected crashes${NC}"
+    echo -e "${YELLOW}[!] minimised/ not found; falling back to raw collected crashes${NC}"
 else
     echo -e "${RED}[!] No crashes found. Run collect-crashes.sh first${NC}"
     exit 1

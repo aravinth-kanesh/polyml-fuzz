@@ -38,7 +38,7 @@ else
 fi
 
 # Check poly binary for AFL++ instrumentation symbols
-# This is the critical check -- if poly isn't instrumented, all coverage data is zero
+# This is the critical check: if poly isn't instrumented, all coverage data is zero
 echo -e "${YELLOW}[3/6] Checking AFL++ instrumentation in poly binary...${NC}"
 POLY_INSTRUMENTED=0
 if strings "$POLY_BIN" 2>/dev/null | grep -qF "__afl_area_ptr"; then
@@ -55,7 +55,7 @@ if [ "$POLY_INSTRUMENTED" -eq 1 ]; then
     echo -e "${GREEN}  [ok] AFL++ instrumentation confirmed in poly binary${NC}"
 else
     echo -e "${RED}  [FAIL] AFL++ symbols not found in poly binary${NC}"
-    echo -e "${RED}         Fuzzing will produce 0 coverage edges -- rebuild with build-polyml.sh${NC}"
+    echo -e "${RED}         Fuzzing will produce 0 coverage edges. Rebuild with build-polyml.sh${NC}"
     FAILED=1
 fi
 
@@ -68,7 +68,7 @@ elif nm "$HARNESS" 2>/dev/null | grep -q "afl"; then
     echo -e "${GREEN}  [ok] AFL++ instrumentation detected in harness (via nm)${NC}"
 else
     echo -e "${YELLOW}  [!] AFL++ instrumentation not confirmed in harness${NC}"
-    echo -e "${YELLOW}      Harness is not used for campaigns -- this is non-critical${NC}"
+    echo -e "${YELLOW}      Harness is not used for campaigns (non-critical)${NC}"
 fi
 
 # Check for sanitiser symbols

@@ -1,5 +1,5 @@
 #!/bin/bash
-# analytics.sh -- Track coverage saturation during a fuzzing campaign
+# analytics.sh: Track coverage saturation during a fuzzing campaign
 #
 # Reads AFL++ plot_data files every hour and logs:
 #   - Edges discovered (bitmap coverage)
@@ -14,9 +14,9 @@
 #   ./campaign/analytics.sh <campaign-name> [--interval SECONDS]
 #
 # Output files (in results/<campaign>/analytics/):
-#   edges_over_time.csv   -- timestamped edge counts (for plotting)
-#   saturation.log        -- saturation detection events
-#   summary.txt           -- latest snapshot of all metrics
+#   edges_over_time.csv   timestamped edge counts (for plotting)
+#   saturation.log        saturation detection events
+#   summary.txt           latest snapshot of all metrics
 
 set -euo pipefail
 
@@ -120,7 +120,7 @@ aggregate_metrics() {
         # Use the maximum edge count across fuzzers (AFL++ syncs corpus, not bitmaps)
         [[ "${edges:-0}" -gt "$total_edges" ]] && total_edges="${edges:-0}"
         total_crashes=$(( total_crashes + ${crashes:-0} ))
-        # execs_per_sec is a float in plot_data -- strip decimal before integer arithmetic
+        # execs_per_sec is a float in plot_data; strip decimal before integer arithmetic
         local execs_int; execs_int="${execs_ps%%.*}"
         total_execs_per_sec=$(( total_execs_per_sec + ${execs_int:-0} ))
         total_execs=$(( total_execs + ${execs:-0} ))
@@ -172,7 +172,7 @@ while true; do
 
     # Append to CSV
     # Columns: timestamp, unix_time, edges_found, delta_edges, total_execs,
-    #          execs_per_sec, unique_crashes, unique_hangs (N/A -- AFL++ doesn't expose per-sample)
+    #          execs_per_sec, unique_crashes, unique_hangs (AFL++ does not expose per-sample)
     printf "%s,%d,%d,%d,%d,%d,%d,0\n" \
         "$TIMESTAMP" "$NOW" "$EDGES" "$DELTA" "${TOTAL_EXECS:-0}" "$EXECS_PS" "$CRASHES" \
         >> "$EDGES_CSV"
@@ -184,7 +184,7 @@ while true; do
         if [[ "$DELTA" -ge "$SATURATION_THRESHOLD" ]]; then
             echo -e "${GREEN}+${DELTA}${NC}"
         else
-            echo -e "${YELLOW}+${DELTA} (low -- possible saturation)${NC}"
+            echo -e "${YELLOW}+${DELTA} (low; possible saturation)${NC}"
         fi
     )"
     echo -e "  Unique crashes:  ${CRASHES}"
@@ -246,7 +246,7 @@ while true; do
 
     # Stop if no fuzzers running and not first sample
     if [[ "$RUNNING" -eq 0 && "$SAMPLE" -gt 1 ]]; then
-        echo -e "${YELLOW}[*] No active fuzzers -- analytics loop ending${NC}"
+        echo -e "${YELLOW}[*] No active fuzzers; analytics loop ending${NC}"
         break
     fi
 

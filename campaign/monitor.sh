@@ -1,5 +1,5 @@
 #!/bin/bash
-# monitor.sh -- Live status dashboard for a Poly/ML fuzzing campaign
+# monitor.sh: Live status dashboard for a Poly/ML fuzzing campaign
 #
 # Usage:
 #   ./campaign/monitor.sh <campaign-name>
@@ -104,7 +104,7 @@ if [[ -f "$EDGES_CSV" ]] && [[ $(wc -l < "$EDGES_CSV") -gt 2 ]]; then
     if [[ "$DELTA" -ge 10 ]]; then
         echo -e "Last delta:  ${GREEN}+${DELTA} edges${NC}"
     elif [[ "$DELTA" -gt 0 ]]; then
-        echo -e "Last delta:  ${YELLOW}+${DELTA} edges (low -- possible saturation)${NC}"
+        echo -e "Last delta:  ${YELLOW}+${DELTA} edges (low; possible saturation)${NC}"
     else
         echo -e "Last delta:  ${RED}+0 edges (saturated?)${NC}"
     fi
@@ -112,7 +112,7 @@ if [[ -f "$EDGES_CSV" ]] && [[ $(wc -l < "$EDGES_CSV") -gt 2 ]]; then
     # Check saturation log
     SAT_LOG="${CAMPAIGN_DIR}/analytics/saturation.log"
     if [[ -f "$SAT_LOG" ]] && [[ -s "$SAT_LOG" ]]; then
-        echo -e "Saturation:  ${RED}DETECTED -- see analytics/saturation.log${NC}"
+        echo -e "Saturation:  ${RED}DETECTED (see analytics/saturation.log)${NC}"
     else
         echo -e "Saturation:  ${GREEN}Not yet detected${NC}"
     fi

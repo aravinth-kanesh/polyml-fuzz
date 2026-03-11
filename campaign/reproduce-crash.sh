@@ -1,5 +1,5 @@
 #!/bin/bash
-# reproduce-crash.sh -- UC2: Reproduce a crash found during fuzzing
+# reproduce-crash.sh: Reproduce a crash found during fuzzing
 #
 # Given a crash input file (from AFL++ crashes/ directory), this script:
 #   1. Confirms the crash reproduces reliably
@@ -7,7 +7,7 @@
 #   3. Classifies the fault type (ASan/UBSan/signal)
 #   4. Saves a structured report alongside the input
 #
-# Designed to be simple and repeatable -- a developer can run this many times
+# Designed to be simple and repeatable; can be run many times
 # against the same input while applying patches or debugging.
 #
 # Usage:
@@ -154,7 +154,7 @@ classify_fault() {
     elif [[ "$exit_code" -gt 128 ]]; then
         local sig=$(( exit_code - 128 ))
         case "$sig" in
-            6)  echo "Signal: SIGABRT (abort -- likely sanitiser)" ;;
+            6)  echo "Signal: SIGABRT (abort; likely sanitiser)" ;;
             11) echo "Signal: SIGSEGV (segmentation fault)" ;;
             4)  echo "Signal: SIGILL (illegal instruction)" ;;
             8)  echo "Signal: SIGFPE (floating point exception)" ;;
@@ -211,7 +211,7 @@ fi
     if [[ -n "$LAST_LOG" ]]; then
         extract_stack_trace "$LAST_LOG"
     else
-        echo "(no crash output -- not reproduced)"
+        echo "(no crash output; not reproduced)"
     fi
 } > "$REPORT_FILE"
 

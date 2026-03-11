@@ -1,5 +1,5 @@
 #!/bin/bash
-# report.sh -- Generate a post-campaign summary report
+# report.sh: Generate a post-campaign summary report
 #
 # Reads AFL++ output directories and analytics/ data to produce a structured
 # summary of: total coverage, saturation time, crashes found, and performance.
@@ -8,8 +8,8 @@
 #   ./campaign/report.sh <campaign-name>
 #
 # Output:
-#   results/<campaign>/REPORT.md   -- Markdown report (for dissertation appendix)
-#   results/<campaign>/REPORT.txt  -- Plain text version
+#   results/<campaign>/REPORT.md   Markdown report (for dissertation appendix)
+#   results/<campaign>/REPORT.txt  Plain text version
 
 set -euo pipefail
 
@@ -35,7 +35,7 @@ fi
 
 echo -e "${GREEN}[*] Generating report for campaign: $CAMPAIGN_NAME${NC}"
 
-# Read campaign metadata (parsed safely -- do not source, values may contain spaces)
+# Read campaign metadata (parsed safely; do not source as values may contain spaces)
 phase=""; START_TIME=""; start_date=""; END_TIME=""; duration=""
 instances=""; seed_count=""; corpus_dirs=""
 

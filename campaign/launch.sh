@@ -1,15 +1,15 @@
 #!/bin/bash
-# launch.sh -- Launch a structured Poly/ML fuzzing campaign
+# launch.sh: Launch a structured Poly/ML fuzzing campaign
 #
 # Usage:
 #   ./campaign/launch.sh --phase 1 [--duration SECONDS] [--instances N] [--name NAME] [--use-evolved]
 #   ./campaign/launch.sh --phase 2 [--duration SECONDS] [--instances N] [--name NAME] [--use-evolved]
 #
 # Phase 1 uses Subset A corpus: basic/, operators/, edge-cases/, regression/
-#   Focus: lexer tokens -- identifiers, operators, literals, comments, boundary values
+#   Focus: lexer tokens (identifiers, operators, literals, comments, boundary values)
 #
 # Phase 2 uses Subset B corpus: stress/, modules/, datatypes/
-#   Focus: parser structures -- deep nesting, module system, complex type expressions
+#   Focus: parser structures (deep nesting, module system, complex type expressions)
 #
 # Duration:
 #   Default 259200 seconds (3 days). Recommended: 3-4 days per phase.
@@ -83,9 +83,9 @@ if [[ "$PHASE" != "1" && "$PHASE" != "2" ]]; then
 fi
 
 # Corpus subset selection
-# Subset A (Phase 1): lexer-focused -- simple tokens, operators, edge cases
+# Subset A (Phase 1): lexer-focused seeds (simple tokens, operators, edge cases)
 SUBSET_A_DIRS=("basic" "operators" "edge-cases" "regression")
-# Subset B (Phase 2): parser-focused -- nested structures, modules, complex types
+# Subset B (Phase 2): parser-focused seeds (nested structures, modules, complex types)
 SUBSET_B_DIRS=("stress" "modules" "datatypes")
 
 if [[ "$PHASE" == "1" ]]; then
@@ -110,7 +110,7 @@ LAUNCH_LOG="${LOG_DIR}/${CAMPAIGN_NAME}-launch.log"
 
 # Pre-flight checks
 echo -e "${GREEN}+============================================+${NC}"
-echo -e "${GREEN}|  Poly/ML Fuzzer -- Campaign Launcher       |${NC}"
+echo -e "${GREEN}|  Poly/ML Fuzzer: Campaign Launcher         |${NC}"
 echo -e "${GREEN}+============================================+${NC}"
 echo ""
 echo -e "${BLUE}Phase:${NC}     $PHASE_DESC"
@@ -204,7 +204,7 @@ START_DATE=$(date)
 # Pre-launch sanity check
 echo -e "${GREEN}[*] Pre-launch sanity check...${NC}"
 if ! timeout 15 "$POLY" < "${CORPUS_DIR}/$(ls "$CORPUS_DIR" | head -1)" > /dev/null 2>&1; then
-    echo -e "${YELLOW}[!] Poly/ML smoke test failed -- proceeding anyway (may be normal)${NC}"
+    echo -e "${YELLOW}[!] Poly/ML smoke test failed; proceeding anyway (may be normal)${NC}"
 else
     echo -e "${GREEN}[ok] Poly/ML responds to input${NC}"
 fi
@@ -267,7 +267,7 @@ echo -e "${GREEN}|  [ok] Campaign running                     |${NC}"
 echo -e "${GREEN}+============================================+${NC}"
 echo ""
 echo -e "${YELLOW}Monitor coverage saturation:${NC}"
-echo -e "  # Run in a separate terminal -- logs edges/hour:"
+echo -e "  # Run in a separate terminal (logs edges/hour):"
 echo -e "  ./campaign/analytics.sh $CAMPAIGN_NAME"
 echo ""
 echo -e "${YELLOW}Live status dashboard:${NC}"

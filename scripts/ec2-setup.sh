@@ -37,7 +37,7 @@ echo -e "${BLUE}[2/6] Installing build tools...${NC}"
 # Add LLVM 15 apt repository so clang-15 is available on Ubuntu 22.04
 # (Ubuntu 22.04 ships clang-13/14 by default; clang-15 requires the LLVM repo)
 if ! apt-cache show clang-15 &>/dev/null; then
-    echo -e "${YELLOW}    clang-15 not in default repos -- adding LLVM apt repository...${NC}"
+    echo -e "${YELLOW}    clang-15 not in default repos, adding LLVM apt repository...${NC}"
     wget -qO- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo tee /etc/apt/trusted.gpg.d/llvm.asc
     echo "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-15 main" \
         | sudo tee /etc/apt/sources.list.d/llvm-15.list
@@ -62,7 +62,7 @@ AUTOCONF_VERSION=$(autoconf --version 2>/dev/null | head -1 | grep -oP '\d+\.\d+
 AUTOCONF_MAJOR=$(echo "$AUTOCONF_VERSION" | cut -d. -f1)
 AUTOCONF_MINOR=$(echo "$AUTOCONF_VERSION" | cut -d. -f2)
 if [ "$AUTOCONF_MAJOR" -lt 2 ] || { [ "$AUTOCONF_MAJOR" -eq 2 ] && [ "$AUTOCONF_MINOR" -lt 72 ]; }; then
-    echo -e "${YELLOW}    autoconf $AUTOCONF_VERSION found -- need 2.72+, building from source...${NC}"
+    echo -e "${YELLOW}    autoconf $AUTOCONF_VERSION found (need 2.72+), building from source...${NC}"
     AUTOCONF_TMP=$(mktemp -d)
     wget -q -P "$AUTOCONF_TMP" https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.gz
     tar xzf "$AUTOCONF_TMP/autoconf-2.72.tar.gz" -C "$AUTOCONF_TMP"
@@ -73,9 +73,9 @@ else
     echo -e "${GREEN}    [ok] autoconf $AUTOCONF_VERSION already sufficient${NC}"
 fi
 
-# Verify clang-15 installed successfully -- without it AFL++ LTO mode won't work
+# Verify clang-15 installed successfully (required for AFL++ LTO mode)
 if ! command -v clang-15 &>/dev/null; then
-    echo -e "${RED}[!] clang-15 installation failed -- check apt output above${NC}"
+    echo -e "${RED}[!] clang-15 installation failed; check apt output above${NC}"
     echo -e "${YELLOW}    Tip: try 'sudo apt-get install clang' for the default version,${NC}"
     echo -e "${YELLOW}    then update CC/CXX in build-polyml.sh accordingly.${NC}"
     exit 1

@@ -1,5 +1,5 @@
 #!/bin/bash
-# trim-seeds.sh -- Minimise large seed files using afl-tmin
+# trim-seeds.sh: Minimise large seed files using afl-tmin
 #
 # AFL++ works best with small inputs. This script runs afl-tmin on seeds
 # larger than a size threshold, reducing them while preserving the same
