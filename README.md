@@ -94,8 +94,8 @@ The campaign is structured as two sequential 3-4 day runs, each targeting a diff
 These seeds exercise lexer tokenisation: identifiers, operators, literals, nested comments, boundary values. They are short programs with limited parse depth.
 
 ```bash
-# Start Phase 1 (3 days = 259200 seconds, 4 instances for c7g.xlarge)
-./campaign/launch.sh --phase 1 --duration 259200 --instances 4
+# Start Phase 1 (3 days = 259200 seconds, 2 instances)
+./campaign/launch.sh --phase 1 --duration 259200 --instances 2
 
 # In a second terminal - track coverage saturation hourly
 ./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
@@ -112,7 +112,7 @@ These seeds exercise the parser with deeply nested structures, module hierarchie
 
 ```bash
 # Start Phase 2
-./campaign/launch.sh --phase 2 --duration 259200 --instances 4
+./campaign/launch.sh --phase 2 --duration 259200 --instances 2
 ```
 
 ### When to stop early

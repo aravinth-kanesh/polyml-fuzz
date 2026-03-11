@@ -48,7 +48,7 @@
 tmux new -s phase1
 
 # Launch Phase 1 (3 days = 259200 seconds)
-./campaign/launch.sh --phase 1 --duration 259200 --instances 4
+./campaign/launch.sh --phase 1 --duration 259200 --instances 2
 
 # In a second pane: track saturation
 ./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
@@ -72,7 +72,7 @@ Stop early if `analytics.sh` reports saturation (< 10 new edges/hour for 3 conse
 Only run if Phase 1 was productive (non-trivial crashes or coverage).
 
 ```bash
-./campaign/launch.sh --phase 2 --duration 259200 --instances 4
+./campaign/launch.sh --phase 2 --duration 259200 --instances 2
 ```
 
 ---
@@ -97,7 +97,7 @@ Coverage saturation (tracked by `analytics.sh`) tells you when the campaign has 
 | c7g.xlarge | 4 | ~$0.14 | ~$20 |
 | c7g.2xlarge | 8 | ~$0.29 | ~$42 |
 
-**Recommended: c7g.xlarge.** 4 vCPUs matches 4 fuzzer instances and leaves ample budget for a second phase.
+**Recommended: AWS EC2 free tier ARM64 instance.** 2 fuzzer instances suited to low-spec free tier hardware.
 
 ---
 

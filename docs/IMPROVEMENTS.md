@@ -99,7 +99,7 @@ Usage:
 
 ```bash
 ./scripts/prepare-evolved-seeds.sh phase1-lexer-trial-2
-./campaign/launch.sh --phase 1 --duration 259200 --instances 4 --use-evolved
+./campaign/launch.sh --phase 1 --duration 259200 --instances 2 --use-evolved
 ```
 
 The script copies `results/<campaign>/fuzzer01/queue/` into `seeds/evolved/`,

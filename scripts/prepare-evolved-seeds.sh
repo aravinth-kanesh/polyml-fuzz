@@ -13,7 +13,7 @@
 #   ./scripts/prepare-evolved-seeds.sh phase1-lexer-trial-2
 #
 # After running, launch the real campaign with:
-#   ./campaign/launch.sh --phase 1 --duration 259200 --instances 4 --use-evolved
+#   ./campaign/launch.sh --phase 1 --duration 259200 --instances 2 --use-evolved
 #
 # To clear the evolved seeds dir and start fresh:
 #   rm -rf seeds/evolved/ && mkdir seeds/evolved/
@@ -74,7 +74,7 @@ done < <(find "$QUEUE_DIR" -maxdepth 1 -type f -print0)
 echo -e "${GREEN}[ok]${NC} Copied $COPIED evolved inputs -> seeds/evolved/"
 echo ""
 echo -e "${YELLOW}To use in the real campaign:${NC}"
-echo -e "  ./campaign/launch.sh --phase 1 --duration 259200 --instances 4 --use-evolved"
+echo -e "  ./campaign/launch.sh --phase 1 --duration 259200 --instances 2 --use-evolved"
 echo ""
 echo -e "${YELLOW}To clear evolved seeds and start fresh:${NC}"
 echo -e "  rm -rf seeds/evolved/ && mkdir seeds/evolved/"
