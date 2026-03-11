@@ -29,7 +29,7 @@ fault discovery is expected or claimed from this run.
 | Exec/sec (fuzzer01) | ~632 |
 | Estimated total exec/sec (4 instances) | ~1,916 |
 | Unique crashes | 0 |
-| Unique hangs | 1 (expected -- timeout seed) |
+| Unique hangs | 1 (expected - timeout seed) |
 | Corpus entries evolved | 134+ |
 | AFL++ cycles completed | 8+ |
 | Saturation detected | No (30 min insufficient; requires 3h <10 edges/hour) |
