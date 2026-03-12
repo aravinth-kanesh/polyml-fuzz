@@ -175,6 +175,8 @@ to a cloud instance (ST4).
 | Phase 1 -> Phase 2 handoff prompt appears after analysis | Pending |
 | Phase 2 launches with evolved corpus from Phase 1 | Pending |
 | Phase 2 `queue/` contains evolved entries from Phase 1 | Pending |
+| `analyse.sh` step 4/4 runs coverage-report.sh or skips cleanly | Pending |
+| `REPORT.md` includes Source Coverage section | Pending |
 
 ### Infrastructure Issues Found and Fixed (this session)
 
