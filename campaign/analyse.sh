@@ -28,6 +28,7 @@ if [[ -z "$CAMPAIGN_NAME" ]]; then
 fi
 
 CAMPAIGN_DIR="${RESULTS_DIR}/${CAMPAIGN_NAME}"
+COVERAGE_BIN="${PROJECT_ROOT}/build/polyml-coverage/install/bin/poly"
 if [[ ! -d "$CAMPAIGN_DIR" ]]; then
     echo -e "${RED}[!] Campaign not found: $CAMPAIGN_NAME${NC}"; exit 1
 fi
@@ -39,16 +40,32 @@ echo ""
 echo -e "${BLUE}Campaign:${NC} $CAMPAIGN_NAME"
 echo ""
 
-echo -e "${BLUE}[1/3] Collecting and deduplicating crashes...${NC}"
+echo -e "${BLUE}[1/4] Collecting and deduplicating crashes...${NC}"
 "${SCRIPT_DIR}/collect-crashes.sh" "$CAMPAIGN_NAME"
 echo ""
 
-echo -e "${BLUE}[2/3] Triaging crashes...${NC}"
+echo -e "${BLUE}[2/4] Triaging crashes...${NC}"
 "${SCRIPT_DIR}/triage.sh" "$CAMPAIGN_NAME"
 echo ""
 
-echo -e "${BLUE}[3/3] Generating campaign report...${NC}"
+echo -e "${BLUE}[3/4] Generating campaign report...${NC}"
 "${SCRIPT_DIR}/report.sh" "$CAMPAIGN_NAME"
+echo ""
+
+echo -e "${BLUE}[4/4] Source coverage report...${NC}"
+EVOLVED_QUEUE="${CAMPAIGN_DIR}/fuzzer01/queue"
+COVERAGE_OUT="${CAMPAIGN_DIR}/coverage"
+if [[ ! -f "$COVERAGE_BIN" ]]; then
+    echo -e "${YELLOW}  [skip] Coverage-instrumented poly not found.${NC}"
+    echo -e "${YELLOW}         Build it with: ./scripts/build-polyml-coverage.sh${NC}"
+    echo -e "${YELLOW}         (or re-run ./setup.sh if you skipped this step)${NC}"
+elif [[ ! -d "$EVOLVED_QUEUE" ]]; then
+    echo -e "${YELLOW}  [skip] No evolved corpus found at ${EVOLVED_QUEUE}${NC}"
+else
+    "${PROJECT_ROOT}/scripts/coverage-report.sh" \
+        --evolved "$EVOLVED_QUEUE" \
+        --output "$COVERAGE_OUT"
+fi
 echo ""
 
 echo -e "${GREEN}+============================================+${NC}"
@@ -56,6 +73,3 @@ echo -e "${GREEN}|  [ok] Analysis complete                    |${NC}"
 echo -e "${GREEN}+============================================+${NC}"
 echo ""
 echo -e "${BLUE}Results:${NC} $CAMPAIGN_DIR"
-echo ""
-echo -e "${YELLOW}Optional: generate per-file coverage report against evolved corpus:${NC}"
-echo -e "  ./scripts/coverage-report.sh --evolved ${CAMPAIGN_DIR}/fuzzer01/queue"

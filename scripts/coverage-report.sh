@@ -44,6 +44,7 @@ NC='\033[0m'
 # Defaults
 EVOLVED_DIR=""
 PHASE=""
+OUT_DIR_OVERRIDE=""
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -56,13 +57,17 @@ while [[ $# -gt 0 ]]; do
             PHASE="$2"
             shift 2
             ;;
+        --output)
+            OUT_DIR_OVERRIDE="$2"
+            shift 2
+            ;;
         -h|--help)
             sed -n '2,20p' "$0" | sed 's/^# \?//'
             exit 0
             ;;
         *)
             echo -e "${RED}[!] Unknown argument: $1${NC}"
-            echo "Usage: $0 [--evolved <corpus-dir>] [--phase 1|2]"
+            echo "Usage: $0 [--evolved <corpus-dir>] [--phase 1|2] [--output <dir>]"
             exit 1
             ;;
     esac
@@ -149,8 +154,12 @@ echo -e "${GREEN}[*] Total inputs:  ${#INPUTS[@]}${NC}"
 echo ""
 
 # Create output directory
-TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-OUT_DIR="${REPORT_BASE}/${TIMESTAMP}"
+if [[ -n "$OUT_DIR_OVERRIDE" ]]; then
+    OUT_DIR="$OUT_DIR_OVERRIDE"
+else
+    TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+    OUT_DIR="${REPORT_BASE}/${TIMESTAMP}"
+fi
 PROFRAW_DIR="${OUT_DIR}/profraw"
 mkdir -p "$PROFRAW_DIR"
 echo -e "${GREEN}[*] Output directory: $OUT_DIR${NC}"

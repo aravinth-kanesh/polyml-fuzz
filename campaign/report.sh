@@ -133,6 +133,15 @@ if [[ -f "${ANALYTICS_DIR}/edges_over_time.csv" ]]; then
     [[ "${PEAK:-0}" -gt "$MAX_EDGES" ]] && MAX_EDGES="${PEAK:-0}"
 fi
 
+# Source coverage summary (populated by coverage-report.sh if run via analyse.sh)
+COVERAGE_DIR="${CAMPAIGN_DIR}/coverage"
+COVERAGE_TOTAL=""
+COVERAGE_ARM64=""
+if [[ -f "${COVERAGE_DIR}/coverage_report.txt" ]]; then
+    COVERAGE_TOTAL=$(grep "^TOTAL" "${COVERAGE_DIR}/coverage_report.txt" | awk '{print $NF}' | head -1)
+    COVERAGE_ARM64=$(grep "arm64.cpp" "${COVERAGE_DIR}/coverage_report.txt" | awk '{print $NF}' | head -1)
+fi
+
 # Triage summary
 TRIAGE_DIR="${CAMPAIGN_DIR}/triaged"
 UBSAN_COUNT=0; ASAN_COUNT=0; SIGNAL_COUNT=0
@@ -195,6 +204,14 @@ Generated: $(date)
 | Evolved corpus size | ${CORPUS_SIZE}   |
 | Total executions    | ${TOTAL_EXECS}   |
 
+## Source Coverage (LLVM)
+
+| Metric                        | Value            |
+|-------------------------------|------------------|
+| Total libpolyml/ region cov.  | ${COVERAGE_TOTAL:-not generated} |
+| arm64.cpp region coverage     | ${COVERAGE_ARM64:-not generated} |
+| Full report                   | \`results/${CAMPAIGN_NAME}/coverage/coverage_report.txt\` |
+
 ## Fuzzer Configuration
 
 - **Fuzzer:** AFL++ with persistent mode (\`__AFL_LOOP(1000)\`)
@@ -237,6 +254,11 @@ printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  UBSan:"  "$UBSAN_COUNT"
 printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  ASan:"   "$ASAN_COUNT"
 printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  Signal:" "$SIGNAL_COUNT"
 echo -e "${GREEN}+============================================+${NC}"
+if [[ -n "$COVERAGE_TOTAL" ]]; then
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Source coverage:" "$COVERAGE_TOTAL"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  arm64.cpp:" "${COVERAGE_ARM64:-n/a}"
+    echo -e "${GREEN}+============================================+${NC}"
+fi
 echo ""
 echo -e "${BLUE}Report written to: $REPORT_MD${NC}"
 echo ""

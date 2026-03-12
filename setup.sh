@@ -19,6 +19,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
 
 POLY_BIN="${SCRIPT_DIR}/build/polyml-instrumented/install/bin/poly"
+COVERAGE_BIN="${SCRIPT_DIR}/build/polyml-coverage/install/bin/poly"
 AFL_BIN="${SCRIPT_DIR}/AFLplusplus/afl-fuzz"
 POLYML_SRC="${SCRIPT_DIR}/polyml-src"
 
@@ -38,7 +39,7 @@ ARCH=$(uname -m)
 # -------------------------------------------------------
 # Step 1: System dependencies, AFL++, and Poly/ML source
 # -------------------------------------------------------
-echo -e "${BLUE}[1/4] System dependencies and tools${NC}"
+echo -e "${BLUE}[1/5] System dependencies and tools${NC}"
 
 if [[ "$OS" == "Linux" ]]; then
     if [[ "$ARCH" != "aarch64" && "$ARCH" != "arm64" ]]; then
@@ -81,7 +82,7 @@ fi
 # Step 2: Build instrumented Poly/ML binary
 # -------------------------------------------------------
 echo ""
-echo -e "${BLUE}[2/4] Instrumented Poly/ML binary${NC}"
+echo -e "${BLUE}[2/5] Instrumented Poly/ML binary${NC}"
 
 if [[ -f "$POLY_BIN" ]]; then
     echo -e "${YELLOW}  [skip] poly binary already present at build/polyml-instrumented/${NC}"
@@ -95,7 +96,7 @@ fi
 # Step 3: Verify build
 # -------------------------------------------------------
 echo ""
-echo -e "${BLUE}[3/4] Verifying build${NC}"
+echo -e "${BLUE}[3/5] Verifying build${NC}"
 echo ""
 "${SCRIPT_DIR}/scripts/verify-build.sh"
 
@@ -103,9 +104,23 @@ echo ""
 # Step 4: Validate seed corpus
 # -------------------------------------------------------
 echo ""
-echo -e "${BLUE}[4/4] Validating seed corpus${NC}"
+echo -e "${BLUE}[4/5] Validating seed corpus${NC}"
 echo ""
 "${SCRIPT_DIR}/scripts/validate-seeds.sh"
+
+# -------------------------------------------------------
+# Step 5: Build coverage-instrumented Poly/ML binary
+# -------------------------------------------------------
+echo ""
+echo -e "${BLUE}[5/5] Coverage-instrumented Poly/ML binary${NC}"
+
+if [[ -f "$COVERAGE_BIN" ]]; then
+    echo -e "${YELLOW}  [skip] coverage poly already present at build/polyml-coverage/${NC}"
+else
+    echo "  Building coverage-instrumented Poly/ML (needed for post-campaign source coverage reports)..."
+    echo ""
+    "${SCRIPT_DIR}/scripts/build-polyml-coverage.sh"
+fi
 
 echo ""
 echo -e "${GREEN}+============================================+${NC}"
