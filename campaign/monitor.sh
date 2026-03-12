@@ -29,7 +29,7 @@ if [[ ! -d "$CAMPAIGN_DIR" ]]; then
 fi
 
 # Running status
-RUNNING_FUZZERS=$(pgrep -c -f "afl-fuzz.*${CAMPAIGN_NAME}" 2>/dev/null || echo 0)
+RUNNING_FUZZERS=$(pgrep -c -f "afl-fuzz.*-o.*${CAMPAIGN_NAME}" 2>/dev/null || echo 0)
 
 echo -e "${GREEN}+============================================+${NC}"
 echo -e "${GREEN}|  Poly/ML Fuzzing Campaign Monitor          |${NC}"

@@ -66,6 +66,8 @@ DURATION=$(ask "Duration in seconds" "259200")
 
 # Instance count
 echo ""
+CPU_COUNT=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo "?")
+echo -e "${BLUE}  CPU cores available: ${CPU_COUNT} (recommended: 1 instance per core)${NC}"
 INSTANCES=$(ask "Number of fuzzer instances" "4")
 
 # Evolved seeds (Phase 2 only)

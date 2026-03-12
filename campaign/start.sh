@@ -8,7 +8,7 @@
 #
 # Navigate between windows: Ctrl+B, n (next) / Ctrl+B, p (previous)
 # Detach from session:       Ctrl+B, d
-# Reattach later:            tmux attach -t fuzz-phase1
+# Reattach later:            tmux attach -t "phase 1"
 #
 # Usage:
 #   ./campaign/start.sh --phase 1 [--duration SECONDS] [--instances N]
@@ -65,7 +65,7 @@ fi
 # launch.sh accepts --name to use this instead of generating its own.
 PHASE_LABEL=$([[ "$PHASE" == "1" ]] && echo "lexer" || echo "parser")
 CAMPAIGN_NAME="phase${PHASE}-${PHASE_LABEL}-$(date +%Y%m%d-%H%M%S)"
-SESSION="fuzz-phase${PHASE}"
+SESSION="phase ${PHASE}"
 
 echo -e "${GREEN}+============================================+${NC}"
 echo -e "${GREEN}|  Poly/ML Fuzzer: Campaign Launcher         |${NC}"
@@ -132,7 +132,7 @@ echo -e "${GREEN}[*] tmux session '${SESSION}' created with 3 windows${NC}"
 echo -e "${YELLOW}    Ctrl+B, n  - next window${NC}"
 echo -e "${YELLOW}    Ctrl+B, p  - previous window${NC}"
 echo -e "${YELLOW}    Ctrl+B, d  - detach (campaign keeps running)${NC}"
-echo -e "${YELLOW}    tmux attach -t ${SESSION}  - reattach${NC}"
+echo -e "${YELLOW}    tmux attach -t "${SESSION}"  - reattach${NC}"
 echo ""
 
 # Attach (or switch if already inside tmux)
