@@ -6,7 +6,7 @@
 #
 # Usage:
 #   ./fuzz.sh               # interactive prompts
-#   ./fuzz.sh --defaults    # accept all defaults without prompting (Phase 1, 3 days, 2 instances)
+#   ./fuzz.sh --defaults    # accept all defaults without prompting (Phase 1, 3 days, 4 instances)
 
 set -euo pipefail
 
@@ -66,7 +66,7 @@ DURATION=$(ask "Duration in seconds" "259200")
 
 # Instance count
 echo ""
-INSTANCES=$(ask "Number of fuzzer instances" "2")
+INSTANCES=$(ask "Number of fuzzer instances" "4")
 
 # Evolved seeds (Phase 2 only)
 EVOLVED_ARG=""
