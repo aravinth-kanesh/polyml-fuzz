@@ -139,7 +139,7 @@ echo -e "${GREEN}[*] tmux session '${SESSION}' created with 3 windows${NC}"
 echo -e "${YELLOW}    Ctrl+B, n  - next window${NC}"
 echo -e "${YELLOW}    Ctrl+B, p  - previous window${NC}"
 echo -e "${YELLOW}    Ctrl+B, d  - detach (campaign keeps running)${NC}"
-echo -e "${YELLOW}    tmux attach -t "${SESSION}"  - reattach${NC}"
+echo -e "${YELLOW}    tmux attach -t \"${SESSION}\"  - reattach${NC}"
 echo ""
 
 # Attach (or switch if already inside tmux)

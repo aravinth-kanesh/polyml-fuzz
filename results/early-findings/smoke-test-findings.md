@@ -147,27 +147,72 @@ constraint, not a framework issue.
 
 ---
 
-## Smoke Test 3 - UTM VM Workflow Validation (Planned)
+## Smoke Test 3 - UTM VM Full Lifecycle Validation
+
+**Date:** 12/03/2026
 
 **Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 8 GB RAM) - same environment as ST1/ST2
 
-**Duration:** ~10 minutes (600 seconds) - enough to confirm workflow, not a performance test
+**Duration:** 2 minutes per phase (120 seconds) — enough to confirm full wizard lifecycle
 
 **Instances:** 4
 
-**Purpose:** Validate the new usability tooling added after Smoke Test 2 (`fuzz.sh`
-interactive wizard, `campaign/start.sh` tmux launcher, and `Makefile` targets) before
-spending cloud credits on EC2. The UTM VM already has poly built and AFL++ installed,
-so this costs nothing.
+**Purpose:** Validate the complete end-to-end workflow driven by `fuzz.sh`: Phase 1 launch,
+automatic post-campaign analysis, Phase 1 -> Phase 2 evolved corpus handoff prompt, Phase 2
+launch, and Phase 2 post-campaign analysis. This is the final UTM validation before committing
+to a cloud instance (ST4).
 
-**Expected criteria to pass:**
-- `fuzz.sh` prompts display correctly and pass arguments through to `start.sh`
-- `start.sh` opens a tmux session with three correctly-named windows (fuzzer, monitor, analytics)
-- `make smoke` completes without error
-- Phase 1 -> Phase 2 `--evolved` handoff: evolved corpus entries visible in Phase 2 `queue/`
-- `campaign/analyse.sh` post-campaign one-liner runs without error
+### Criteria (partially validated in earlier runs this session)
 
-*Results to be filled in after run.*
+| Criterion | Status |
+|---|---|
+| `fuzz.sh` prompts display correctly and pass args to `start.sh` | Pass (prior run) |
+| `start.sh` opens tmux session with 3 windows (fuzzer, monitor, analytics) | Pass (prior run) |
+| `campaign/analyse.sh` runs without error after campaign | Pass (prior run) |
+| `campaign/report.sh` generates REPORT.md | Pass (prior run) |
+| `monitor.sh` fuzzer count correct (not double-counted) | Pass (fix applied) |
+| tmux session auto-kills after analysis complete | Pending |
+| Phase 1 -> Phase 2 handoff prompt appears after analysis | Pending |
+| Phase 2 launches with evolved corpus from Phase 1 | Pending |
+| Phase 2 `queue/` contains evolved entries from Phase 1 | Pending |
+
+### Infrastructure Issues Found and Fixed (this session)
+
+#### 1. `monitor.sh` reported double the running fuzzer count
+
+- **Problem:** `pgrep -c -f "afl-fuzz.*${CAMPAIGN_NAME}"` matched too broadly, counting
+  unrelated processes and reporting 8 fuzzers instead of 4.
+- **Fix:** Pattern scoped to `afl-fuzz.*-o.*${CAMPAIGN_NAME}` to match only afl-fuzz
+  processes with the output directory flag.
+
+#### 2. tmux session name `fuzz-phase1` merged visually with window index
+
+- **Problem:** In the tmux status bar, `[fuzz-phase1:0:fuzzer...]` caused the trailing `1`
+  and window index `0` to read as `fuzz-phas0`, confusing the session name.
+- **Fix:** Session renamed to `phase 1` / `phase 2` (space-separated); status bar now
+  displays `[phase 1] 0:fuzzer 1:monitor 2:analytics` unambiguously.
+
+#### 3. tmux session not cleaned up after campaign
+
+- **Problem:** After the campaign finished, the tmux session remained open, blocking the
+  terminal and requiring manual `tmux kill-session`.
+- **Fix:** `start.sh` now kills the session automatically after the user presses Enter
+  at the analysis complete prompt.
+
+#### 4. Post-campaign analysis required manual steps
+
+- **Problem:** After a campaign, users had to manually run `analyse.sh` and `report.sh`.
+- **Fix:** `start.sh` now automatically runs `analyse.sh` (which calls collect-crashes,
+  triage, and report) when the campaign ends, before prompting to close.
+
+#### 5. Phase 1 -> Phase 2 handoff required manual command construction
+
+- **Problem:** After Phase 1, users had to manually find the campaign name and run
+  `start.sh --phase 2 --evolved <name>`.
+- **Fix:** `fuzz.sh` now prompts for Phase 2 automatically after Phase 1 analysis
+  completes, pre-filling the evolved corpus campaign name from `results/.last-campaign`.
+
+*Full results to be filled in after run.*
 
 ---
 
@@ -179,16 +224,16 @@ so this costs nothing.
 
 **Instances:** 4
 
-**Purpose:** Validate `ec2-setup.sh` end-to-end on a bare-metal ARM64 instance (fresh
-install, no pre-built binaries) and confirm performance without the RAM pressure seen on
-the 1 GB UTM VM. This is the final gate before committing to a multi-day Phase 1 campaign.
+**Purpose:** Validate `ec2-setup.sh` end-to-end on a fresh EC2 ARM64 instance (no
+pre-built binaries) and confirm performance on bare-metal without the QEMU I/O overhead
+seen on the UTM VM. This is the final gate before committing to a multi-day Phase 1 campaign.
 
 **Expected criteria to pass:**
 - `ec2-setup.sh` completes without error on a fresh Ubuntu 22.04 ARM64 instance
 - `verify-build.sh` reports poly binary instrumented
 - `exec/sec > 1,000` sustained throughout the run
 - `edges found > 500` after 30 minutes
-- No unexpected sig:09 crashes (would indicate a Linux config issue, not a macOS artefact)
+- No unexpected sig:09 crashes
 - `analytics.sh` saturation CSV logs without error
 
 *Results to be filled in after run.*
@@ -203,9 +248,9 @@ the 1 GB UTM VM. This is the final gate before committing to a multi-day Phase 1
 
 **Instances:** 4
 
-**Purpose:** Validate the full Phase 1 -> Phase 2 handoff on a remote instance: confirm
-that the evolved corpus from Smoke Test 4 is correctly passed via `--evolved`, and that
-Phase 2 seeds (Subset B: stress/, modules/, datatypes/) load and mutate correctly.
+**Purpose:** Validate the full Phase 1 -> Phase 2 handoff on EC2: confirm that the evolved
+corpus from Smoke Test 4 is correctly passed via the `fuzz.sh` wizard handoff prompt, and
+that Phase 2 seeds (Subset B: stress/, modules/, datatypes/) load and mutate correctly.
 
 **Expected criteria to pass:**
 - Phase 2 campaign starts with evolved corpus entries visible in `queue/`

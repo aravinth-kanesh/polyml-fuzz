@@ -66,9 +66,10 @@ DURATION=$(ask "Duration in seconds" "259200")
 
 # Instance count
 echo ""
+echo -e "${BLUE}Fuzzer instances:${NC}"
 CPU_COUNT=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo "?")
-echo -e "${BLUE}  CPU cores available: ${CPU_COUNT} (recommended: 1 instance per core)${NC}"
-INSTANCES=$(ask "Number of fuzzer instances" "4")
+echo -e "  CPU cores available: ${CPU_COUNT} (recommended: 1 instance per core)"
+INSTANCES=$(ask "Number of instances" "4")
 
 # Evolved seeds (Phase 2 only)
 EVOLVED_ARG=""
@@ -86,15 +87,17 @@ if [[ "$PHASE" == "2" ]]; then
     fi
 fi
 
+PHASE_LABEL=$([[ "$PHASE" == "1" ]] && echo "Lexer: basic, operators, edge-cases, regression" || echo "Parser: stress, modules, datatypes")
+
 # Summary
 echo ""
 echo -e "${GREEN}+============================================+${NC}"
 echo -e "${GREEN}  Campaign configuration                      ${NC}"
 echo -e "${GREEN}+============================================+${NC}"
-echo -e "  Phase:     $PHASE"
+echo -e "  Phase:     $PHASE ($PHASE_LABEL)"
 echo -e "  Duration:  $DURATION seconds ($(( DURATION / 3600 )) hours $(( (DURATION % 3600) / 60 )) min)"
 echo -e "  Instances: $INSTANCES"
-[[ -n "$EVOLVED_ARG" ]] && echo -e "  Evolved:   $EVOLVED_ARG"
+[[ -n "$EVOLVED_ARG" ]] && echo -e "  Evolved:   ${EVOLVED_ARG#--evolved }"
 echo ""
 
 if ! confirm "Launch campaign?"; then
