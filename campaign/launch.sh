@@ -197,7 +197,7 @@ START_DATE=$(date)
     echo "duration=$DURATION"
     echo "instances=$INSTANCES"
     echo "seed_count=$SEED_COUNT"
-    echo "corpus_dirs=${CORPUS_DIRS[*]}"
+    echo "corpus_dirs='${CORPUS_DIRS[*]}'"
     echo "poly=$POLY"
 } > "${OUTPUT_DIR}/campaign.meta"
 
