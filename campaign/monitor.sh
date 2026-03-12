@@ -29,7 +29,7 @@ if [[ ! -d "$CAMPAIGN_DIR" ]]; then
 fi
 
 # Running status
-RUNNING_FUZZERS=$(pgrep -f "afl-fuzz.*${CAMPAIGN_NAME}" 2>/dev/null | wc -l | tr -d ' ' || echo 0)
+RUNNING_FUZZERS=$(pgrep -c -f "afl-fuzz.*${CAMPAIGN_NAME}" 2>/dev/null || echo 0)
 
 echo -e "${GREEN}+============================================+${NC}"
 echo -e "${GREEN}|  Poly/ML Fuzzing Campaign Monitor          |${NC}"
@@ -150,7 +150,7 @@ for fuzzer_dir in "${CAMPAIGN_DIR}"/fuzzer*/; do
     PLOT_DATA="${fuzzer_dir}plot_data"
 
     if [[ -f "$PLOT_DATA" ]]; then
-        LAST_UPDATE=$(stat -f %m "$PLOT_DATA" 2>/dev/null || stat -c %Y "$PLOT_DATA" 2>/dev/null || echo 0)
+        LAST_UPDATE=$(stat -c %Y "$PLOT_DATA" 2>/dev/null || stat -f %m "$PLOT_DATA" 2>/dev/null || echo 0)
         AGE=$(( $(date +%s) - LAST_UPDATE ))
 
         if [[ "$AGE" -gt 600 ]]; then
