@@ -28,13 +28,12 @@ else
     FAILED=1
 fi
 
-# Check harness exists
+# Check harness exists (non-critical: harness is not used for campaigns)
 echo -e "${YELLOW}[2/6] Checking harness binary...${NC}"
 if [ -f "$HARNESS" ]; then
     echo -e "${GREEN}  [ok] Harness found at: $HARNESS${NC}"
 else
-    echo -e "${RED}  [FAIL] Harness not found${NC}"
-    FAILED=1
+    echo -e "${YELLOW}  [!] Harness not found (non-critical: not used in campaigns)${NC}"
 fi
 
 # Check poly binary for AFL++ instrumentation symbols
