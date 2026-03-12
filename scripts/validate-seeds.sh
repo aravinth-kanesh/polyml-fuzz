@@ -14,14 +14,17 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+# --quiet: suppress per-seed lines; show only summary
+QUIET=0
+for arg in "$@"; do [[ "$arg" == "--quiet" ]] && QUIET=1; done
+
 # Check if Poly/ML exists
 if [ ! -f "$POLY_BIN" ]; then
     echo -e "${RED}[!] Poly/ML not found. Build it first: ./scripts/build-polyml.sh${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}[*] Validating seed corpus${NC}"
-echo ""
+[[ $QUIET -eq 0 ]] && { echo -e "${GREEN}[*] Validating seed corpus${NC}"; echo ""; }
 
 TOTAL=0
 PASSED=0
@@ -37,13 +40,13 @@ while IFS= read -r -d '' seed_file; do
 
     # Run Poly/ML with timeout
     if timeout 5 "$POLY_BIN" < "$seed_file" > /dev/null 2>&1; then
-        echo -e "${GREEN}  [ok] $rel_path${NC}"
+        [[ $QUIET -eq 0 ]] && echo -e "${GREEN}  [ok] $rel_path${NC}"
         PASSED=$((PASSED + 1))
     else
         EXIT_CODE=$?
         if [ $EXIT_CODE -eq 124 ]; then
             # Timeout
-            echo -e "${YELLOW}  [timeout] $rel_path (timeout)${NC}"
+            [[ $QUIET -eq 0 ]] && echo -e "${YELLOW}  [timeout] $rel_path (timeout)${NC}"
             FAILED=$((FAILED + 1))
         elif [ $EXIT_CODE -gt 128 ]; then
             # Crash (signal)
@@ -51,7 +54,7 @@ while IFS= read -r -d '' seed_file; do
             CRASHED=$((CRASHED + 1))
         else
             # Normal error (parse error is OK for some seeds)
-            echo -e "${YELLOW}  ~ $rel_path (parse error - may be intentional)${NC}"
+            [[ $QUIET -eq 0 ]] && echo -e "${YELLOW}  ~ $rel_path (parse error - may be intentional)${NC}"
             PASSED=$((PASSED + 1))
         fi
     fi
@@ -81,5 +84,9 @@ if [ $TOTAL -lt 20 ]; then
     echo -e "${YELLOW}    Target: 50+ seeds across different categories${NC}"
 fi
 
-echo ""
-echo -e "${GREEN}[ok] Validation complete!${NC}"
+if [[ $QUIET -eq 1 ]]; then
+    echo -e "${GREEN}  [ok] Seeds: ${PASSED} passed, ${FAILED} timeout, ${CRASHED} crashed${NC}"
+else
+    echo ""
+    echo -e "${GREEN}[ok] Validation complete!${NC}"
+fi

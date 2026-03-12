@@ -15,6 +15,8 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 CAMPAIGN_NAME="${1:-}"
+QUIET=0
+for arg in "$@"; do [[ "$arg" == "--quiet" ]] && QUIET=1; done
 
 if [ -z "$CAMPAIGN_NAME" ]; then
     echo -e "${RED}Usage: $0 <campaign-name>${NC}"
@@ -29,7 +31,7 @@ if [ ! -d "$CAMPAIGN_DIR" ]; then
     exit 1
 fi
 
-echo -e "${GREEN}[*] Collecting crashes from campaign: $CAMPAIGN_NAME${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Collecting crashes from campaign: $CAMPAIGN_NAME${NC}"
 
 # Create output directory
 mkdir -p "$CRASHES_OUTPUT"
@@ -61,11 +63,11 @@ for fuzzer_dir in "$CAMPAIGN_DIR"/fuzzer*/crashes; do
     fi
 done
 
-echo -e "${GREEN}[*] Collected $TOTAL_CRASHES unique crash files (${TOTAL_DUPES} duplicates removed)${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Collected $TOTAL_CRASHES unique crash files (${TOTAL_DUPES} duplicates removed)${NC}"
 
 # Minimise crashes using AFL++ tmin
 if command -v afl-tmin &> /dev/null; then
-    echo -e "${GREEN}[*] Minimising crashes...${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Minimising crashes...${NC}"
 
     MINIMISED_DIR="$CRASHES_OUTPUT/minimised"
     mkdir -p "$MINIMISED_DIR"
@@ -76,7 +78,7 @@ if command -v afl-tmin &> /dev/null; then
     for crash_file in "$CRASHES_OUTPUT"/*; do
         if [ -f "$crash_file" ] && [[ ! "$crash_file" =~ /minimised/ ]]; then
             CRASH_NAME=$(basename "$crash_file")
-            echo -e "${BLUE}  Minimising: $CRASH_NAME${NC}"
+            [[ $QUIET -eq 0 ]] && echo -e "${BLUE}  Minimising: $CRASH_NAME${NC}"
 
             timeout 60 afl-tmin \
                 -i "$crash_file" \
@@ -88,17 +90,21 @@ if command -v afl-tmin &> /dev/null; then
         fi
     done
 
-    echo -e "${GREEN}[[ok]] Minimised crashes saved to: $MINIMISED_DIR${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[[ok]] Minimised crashes saved to: $MINIMISED_DIR${NC}"
 else
-    echo -e "${YELLOW}[!] afl-tmin not found, skipping minimisation${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${YELLOW}[!] afl-tmin not found, skipping minimisation${NC}"
 fi
 
-echo ""
-echo -e "${GREEN}+============================================+${NC}"
-echo -e "${GREEN}|  [ok] Crash collection complete               |${NC}"
-echo -e "${GREEN}+============================================+${NC}"
-echo ""
-echo -e "${BLUE}Output:${NC} $CRASHES_OUTPUT"
-echo -e "${BLUE}Total:${NC}  $TOTAL_CRASHES crashes"
-echo ""
-echo -e "${YELLOW}Next step: ./campaign/triage.sh $CAMPAIGN_NAME${NC}"
+if [[ $QUIET -eq 1 ]]; then
+    echo -e "${GREEN}  [ok] Crashes: ${TOTAL_CRASHES} unique (${TOTAL_DUPES} duplicates removed)${NC}"
+else
+    echo ""
+    echo -e "${GREEN}+============================================+${NC}"
+    echo -e "${GREEN}|  [ok] Crash collection complete               |${NC}"
+    echo -e "${GREEN}+============================================+${NC}"
+    echo ""
+    echo -e "${BLUE}Output:${NC} $CRASHES_OUTPUT"
+    echo -e "${BLUE}Total:${NC}  $TOTAL_CRASHES crashes"
+    echo ""
+    echo -e "${YELLOW}Next step: ./campaign/triage.sh $CAMPAIGN_NAME${NC}"
+fi

@@ -151,34 +151,46 @@ constraint, not a framework issue.
 
 **Date:** 12/03/2026
 
-**Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 8 GB RAM) - same environment as ST1/ST2
+**Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 8 GB RAM) - fresh install, no
+pre-installed dependencies
 
 **Duration:** 2 minutes per phase (120 seconds) — enough to confirm full wizard lifecycle
 
 **Instances:** 4
 
-**Purpose:** Validate the complete end-to-end workflow driven by `fuzz.sh`: Phase 1 launch,
-automatic post-campaign analysis, Phase 1 -> Phase 2 evolved corpus handoff prompt, Phase 2
-launch, and Phase 2 post-campaign analysis. This is the final UTM validation before committing
-to a cloud instance (ST4).
+**Purpose:** Validate the complete end-to-end workflow on a fresh machine: `setup.sh` from
+scratch, `fuzz.sh` wizard, Phase 1 launch, automatic post-campaign analysis, Phase 1 -> Phase 2
+evolved corpus handoff, Phase 2 launch, and Phase 2 post-campaign analysis including LLVM
+source coverage.
 
-### Criteria (partially validated in earlier runs this session)
+### Results Summary
+
+| Metric | Value |
+|---|---|
+| Phase 1 source coverage (libpolyml/ total) | 24.47% |
+| Phase 2 source coverage (libpolyml/ total) | 24.84% |
+| Unique crashes (both phases) | 0 |
+| Phase 1 evolved seeds passed to Phase 2 | 158 |
+| Phase 2 total corpus (Subset B + evolved) | 195 seeds |
+
+### Criteria
 
 | Criterion | Status |
 |---|---|
-| `fuzz.sh` prompts display correctly and pass args to `start.sh` | Pass (prior run) |
-| `start.sh` opens tmux session with 3 windows (fuzzer, monitor, analytics) | Pass (prior run) |
-| `campaign/analyse.sh` runs without error after campaign | Pass (prior run) |
-| `campaign/report.sh` generates REPORT.md | Pass (prior run) |
-| `monitor.sh` fuzzer count correct (not double-counted) | Pass (fix applied) |
-| tmux session auto-kills after analysis complete | Pending |
-| Phase 1 -> Phase 2 handoff prompt appears after analysis | Pending |
-| Phase 2 launches with evolved corpus from Phase 1 | Pending |
-| Phase 2 `queue/` contains evolved entries from Phase 1 | Pending |
-| `analyse.sh` step 4/4 runs coverage-report.sh or skips cleanly | Pending |
-| `REPORT.md` includes Source Coverage section | Pending |
+| `setup.sh` completes all 5 steps on a fresh install | Pass |
+| `fuzz.sh` prompts display correctly and pass args to `start.sh` | Pass |
+| `start.sh` opens tmux session with 3 windows (fuzzer, monitor, analytics) | Pass |
+| `campaign/analyse.sh` runs without error after campaign | Pass |
+| `campaign/report.sh` generates REPORT.md | Pass |
+| `monitor.sh` fuzzer count correct (not double-counted) | Pass |
+| tmux session auto-kills after analysis complete | Pass |
+| Phase 1 -> Phase 2 handoff prompt appears after analysis | Pass |
+| Phase 2 launches with evolved corpus from Phase 1 | Pass |
+| Phase 2 `queue/` contains evolved entries from Phase 1 | Pass |
+| `analyse.sh` step 4/4 runs coverage-report.sh or skips cleanly | Pass |
+| `REPORT.md` includes Source Coverage section | Pass |
 
-### Infrastructure Issues Found and Fixed (this session)
+### Infrastructure Issues Found and Fixed
 
 #### 1. `monitor.sh` reported double the running fuzzer count
 
@@ -214,7 +226,29 @@ to a cloud instance (ST4).
 - **Fix:** `fuzz.sh` now prompts for Phase 2 automatically after Phase 1 analysis
   completes, pre-filling the evolved corpus campaign name from `results/.last-campaign`.
 
-*Full results to be filled in after run.*
+#### 6. `verify-build.sh` harness check was a hard failure
+
+- **Problem:** The harness binary is not used in campaigns (reference only), but its
+  absence caused `verify-build.sh` to set `FAILED=1` and exit non-zero, blocking
+  `setup.sh` at step 3/5 on a fresh clone that never built the harness.
+- **Fix:** Harness check downgraded to a yellow warning; does not affect the exit code.
+
+#### 7. `verify-build.sh` AFL++ symbol check false positive when called as subprocess
+
+- **Problem:** `strings` and `nm` symbol checks passed when run interactively but failed
+  when `verify-build.sh` was invoked as a subprocess from `setup.sh`, due to PATH
+  not being inherited correctly in the subprocess environment.
+- **Fix:** Tool paths resolved explicitly with `command -v` before use. A runtime
+  execution fallback (run `poly` on a trivial input) added as a final check if symbol
+  checks are inconclusive.
+
+### Conclusion
+
+Full end-to-end lifecycle validated on a fresh Ubuntu 22.04.5 LTS ARM64 UTM VM (no
+pre-installed dependencies). `setup.sh` completed all 5 steps without intervention.
+`fuzz.sh` wizard guided Phase 1 and Phase 2 campaigns, auto-analysis ran successfully
+after each, and the Phase 1 evolved corpus (158 inputs) was correctly handed off to
+Phase 2. LLVM source coverage reports generated for both phases. All criteria passed.
 
 ---
 

@@ -41,15 +41,15 @@ echo -e "${BLUE}Campaign:${NC} $CAMPAIGN_NAME"
 echo ""
 
 echo -e "${BLUE}[1/4] Collecting and deduplicating crashes...${NC}"
-"${SCRIPT_DIR}/collect-crashes.sh" "$CAMPAIGN_NAME"
+"${SCRIPT_DIR}/collect-crashes.sh" "$CAMPAIGN_NAME" --quiet
 echo ""
 
 echo -e "${BLUE}[2/4] Triaging crashes...${NC}"
-"${SCRIPT_DIR}/triage.sh" "$CAMPAIGN_NAME"
+"${SCRIPT_DIR}/triage.sh" "$CAMPAIGN_NAME" --quiet
 echo ""
 
 echo -e "${BLUE}[3/4] Generating campaign report...${NC}"
-"${SCRIPT_DIR}/report.sh" "$CAMPAIGN_NAME"
+"${SCRIPT_DIR}/report.sh" "$CAMPAIGN_NAME" --quiet
 echo ""
 
 echo -e "${BLUE}[4/4] Source coverage report...${NC}"
@@ -64,7 +64,8 @@ elif [[ ! -d "$EVOLVED_QUEUE" ]]; then
 else
     "${PROJECT_ROOT}/scripts/coverage-report.sh" \
         --evolved "$EVOLVED_QUEUE" \
-        --output "$COVERAGE_OUT"
+        --output "$COVERAGE_OUT" \
+        --quiet
 fi
 echo ""
 

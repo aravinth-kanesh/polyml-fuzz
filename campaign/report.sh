@@ -21,6 +21,9 @@ RESULTS_DIR="${PROJECT_ROOT}/results"
 GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC='\033[0m'
 
 CAMPAIGN_NAME="${1:-}"
+QUIET=0
+for arg in "$@"; do [[ "$arg" == "--quiet" ]] && QUIET=1; done
+
 if [[ -z "$CAMPAIGN_NAME" ]]; then
     echo -e "${RED}Usage: $0 <campaign-name>${NC}"; exit 1
 fi
@@ -33,7 +36,7 @@ if [[ ! -d "$CAMPAIGN_DIR" ]]; then
     echo -e "${RED}[!] Campaign not found: $CAMPAIGN_DIR${NC}"; exit 1
 fi
 
-echo -e "${GREEN}[*] Generating report for campaign: $CAMPAIGN_NAME${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Generating report for campaign: $CAMPAIGN_NAME${NC}"
 
 # Read campaign metadata (parsed safely; do not source as values may contain spaces)
 phase=""; START_TIME=""; start_date=""; END_TIME=""; duration=""
@@ -240,27 +243,33 @@ To reproduce any crash:
 MDEOF
 
 # Print summary to terminal
-echo ""
-echo -e "${GREEN}+============================================+${NC}"
-echo -e "${GREEN}|  Campaign Report Summary                   |${NC}"
-echo -e "${GREEN}+============================================+${NC}"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Campaign:"    "$CAMPAIGN_NAME"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Elapsed:"     "$ELAPSED_STR"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Edges found:" "$MAX_EDGES"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Saturation:"  "$SATURATION_TIME"
-echo -e "${GREEN}+============================================+${NC}"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Unique crashes:" "$TOTAL_CRASHES"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  UBSan:"  "$UBSAN_COUNT"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  ASan:"   "$ASAN_COUNT"
-printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  Signal:" "$SIGNAL_COUNT"
-echo -e "${GREEN}+============================================+${NC}"
-if [[ -n "$COVERAGE_TOTAL" ]]; then
-    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Source coverage:" "$COVERAGE_TOTAL"
-    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  arm64.cpp:" "${COVERAGE_ARM64:-n/a}"
+if [[ $QUIET -eq 1 ]]; then
+    echo -e "${GREEN}  [ok] Report: edges=${MAX_EDGES}, crashes=${TOTAL_CRASHES}${NC}"
+    [[ -n "$COVERAGE_TOTAL" ]] && echo -e "${GREEN}       Coverage: ${COVERAGE_TOTAL} total, arm64.cpp: ${COVERAGE_ARM64:-n/a}${NC}"
+    echo -e "${GREEN}       ${REPORT_MD}${NC}"
+else
+    echo ""
     echo -e "${GREEN}+============================================+${NC}"
+    echo -e "${GREEN}|  Campaign Report Summary                   |${NC}"
+    echo -e "${GREEN}+============================================+${NC}"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Campaign:"    "$CAMPAIGN_NAME"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Elapsed:"     "$ELAPSED_STR"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Edges found:" "$MAX_EDGES"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Saturation:"  "$SATURATION_TIME"
+    echo -e "${GREEN}+============================================+${NC}"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Unique crashes:" "$TOTAL_CRASHES"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  UBSan:"  "$UBSAN_COUNT"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  ASan:"   "$ASAN_COUNT"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  Signal:" "$SIGNAL_COUNT"
+    echo -e "${GREEN}+============================================+${NC}"
+    if [[ -n "$COVERAGE_TOTAL" ]]; then
+        printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Source coverage:" "$COVERAGE_TOTAL"
+        printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  arm64.cpp:" "${COVERAGE_ARM64:-n/a}"
+        echo -e "${GREEN}+============================================+${NC}"
+    fi
+    echo ""
+    echo -e "${BLUE}Report written to: $REPORT_MD${NC}"
+    echo ""
+    echo -e "${YELLOW}To view coverage over time:${NC}"
+    echo -e "  cat ${CAMPAIGN_DIR}/analytics/edges_over_time.csv"
 fi
-echo ""
-echo -e "${BLUE}Report written to: $REPORT_MD${NC}"
-echo ""
-echo -e "${YELLOW}To view coverage over time:${NC}"
-echo -e "  cat ${CAMPAIGN_DIR}/analytics/edges_over_time.csv"

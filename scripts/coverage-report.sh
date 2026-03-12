@@ -45,6 +45,7 @@ NC='\033[0m'
 EVOLVED_DIR=""
 PHASE=""
 OUT_DIR_OVERRIDE=""
+QUIET=0
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -61,6 +62,10 @@ while [[ $# -gt 0 ]]; do
             OUT_DIR_OVERRIDE="$2"
             shift 2
             ;;
+        --quiet)
+            QUIET=1
+            shift
+            ;;
         -h|--help)
             sed -n '2,20p' "$0" | sed 's/^# \?//'
             exit 0
@@ -73,10 +78,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-echo -e "${GREEN}+============================================+${NC}"
-echo -e "${GREEN}|  Poly/ML Per-File Coverage Report          |${NC}"
-echo -e "${GREEN}+============================================+${NC}"
-echo ""
+if [[ $QUIET -eq 0 ]]; then
+    echo -e "${GREEN}+============================================+${NC}"
+    echo -e "${GREEN}|  Poly/ML Per-File Coverage Report          |${NC}"
+    echo -e "${GREEN}+============================================+${NC}"
+    echo ""
+fi
 
 # Check coverage binary exists
 if [ ! -f "$POLY_BIN" ]; then
@@ -109,23 +116,25 @@ if [ -z "$LLVM_PROFDATA_BIN" ]; then
     exit 1
 fi
 
-echo -e "${GREEN}[*] Coverage poly:  $POLY_BIN${NC}"
-echo -e "${GREEN}[*] llvm-profdata:  $LLVM_PROFDATA_BIN${NC}"
-echo -e "${GREEN}[*] llvm-cov:       $LLVM_COV_BIN${NC}"
-echo ""
+if [[ $QUIET -eq 0 ]]; then
+    echo -e "${GREEN}[*] Coverage poly:  $POLY_BIN${NC}"
+    echo -e "${GREEN}[*] llvm-profdata:  $LLVM_PROFDATA_BIN${NC}"
+    echo -e "${GREEN}[*] llvm-cov:       $LLVM_COV_BIN${NC}"
+    echo ""
+fi
 
 # Collect seed files to run
 # Filter by phase if requested
 SEED_SUBDIRS=()
 if [ "$PHASE" = "1" ]; then
     SEED_SUBDIRS=("basic" "operators" "edge-cases" "regression")
-    echo -e "${GREEN}[*] Phase 1 seeds: basic, operators, edge-cases, regression${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Phase 1 seeds: basic, operators, edge-cases, regression${NC}"
 elif [ "$PHASE" = "2" ]; then
     SEED_SUBDIRS=("stress" "modules" "datatypes")
-    echo -e "${GREEN}[*] Phase 2 seeds: stress, modules, datatypes${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Phase 2 seeds: stress, modules, datatypes${NC}"
 else
     SEED_SUBDIRS=("basic" "operators" "edge-cases" "regression" "stress" "modules" "datatypes")
-    echo -e "${GREEN}[*] All seeds (both phases)${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] All seeds (both phases)${NC}"
 fi
 
 INPUTS=()
@@ -147,11 +156,10 @@ if [ -n "$EVOLVED_DIR" ]; then
     while IFS= read -r -d '' f; do
         INPUTS+=("$f")
     done < <(find "$EVOLVED_DIR" -maxdepth 1 -type f -print0)
-    echo -e "${GREEN}[*] Evolved corpus: $EVOLVED_DIR ($(find "$EVOLVED_DIR" -maxdepth 1 -type f | wc -l) entries)${NC}"
+    [[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Evolved corpus: $EVOLVED_DIR ($(find "$EVOLVED_DIR" -maxdepth 1 -type f | wc -l) entries)${NC}"
 fi
 
-echo -e "${GREEN}[*] Total inputs:  ${#INPUTS[@]}${NC}"
-echo ""
+[[ $QUIET -eq 0 ]] && { echo -e "${GREEN}[*] Total inputs:  ${#INPUTS[@]}${NC}"; echo ""; }
 
 # Create output directory
 if [[ -n "$OUT_DIR_OVERRIDE" ]]; then
@@ -162,13 +170,12 @@ else
 fi
 PROFRAW_DIR="${OUT_DIR}/profraw"
 mkdir -p "$PROFRAW_DIR"
-echo -e "${GREEN}[*] Output directory: $OUT_DIR${NC}"
-echo ""
+[[ $QUIET -eq 0 ]] && { echo -e "${GREEN}[*] Output directory: $OUT_DIR${NC}"; echo ""; }
 
 # Run each input through coverage poly
 # LLVM_PROFILE_FILE controls where the profraw data is written
 # timeout 15s: match campaign timeout to avoid hangs skewing coverage
-echo -e "${GREEN}[*] Running inputs through coverage poly...${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Running inputs through coverage poly...${NC}"
 COUNT=0
 FAILED=0
 for input in "${INPUTS[@]}"; do
@@ -178,12 +185,11 @@ for input in "${INPUTS[@]}"; do
         timeout 15 "$POLY_BIN" < "$input" >/dev/null 2>&1 \
         || FAILED=$((FAILED + 1))
     # Print progress every 50 inputs
-    if (( COUNT % 50 == 0 )); then
+    if [[ $QUIET -eq 0 ]] && (( COUNT % 50 == 0 )); then
         echo -e "    ${COUNT}/${#INPUTS[@]} done..."
     fi
 done
-echo -e "${GREEN}[ok] Ran $COUNT inputs ($FAILED timed out or errored; expected for malformed inputs)${NC}"
-echo ""
+[[ $QUIET -eq 0 ]] && { echo -e "${GREEN}[ok] Ran $COUNT inputs ($FAILED timed out or errored; expected for malformed inputs)${NC}"; echo ""; }
 
 # Check at least some profraw files were generated
 PROFRAW_COUNT=$(find "$PROFRAW_DIR" -name "*.profraw" -size +0 | wc -l)
@@ -191,20 +197,19 @@ if [ "$PROFRAW_COUNT" -eq 0 ]; then
     echo -e "${RED}[!] No profraw files generated. Coverage instrumentation may not be working.${NC}"
     exit 1
 fi
-echo -e "${GREEN}[*] Profile files generated: $PROFRAW_COUNT${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Profile files generated: $PROFRAW_COUNT${NC}"
 
 # Merge all profraw files into a single profdata file
-echo -e "${GREEN}[*] Merging profile data...${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Merging profile data...${NC}"
 PROFDATA_FILE="${OUT_DIR}/merged.profdata"
 "$LLVM_PROFDATA_BIN" merge -sparse \
     "${PROFRAW_DIR}"/input_*.profraw \
     -o "$PROFDATA_FILE"
-echo -e "${GREEN}[ok] Merged profile: $PROFDATA_FILE${NC}"
-echo ""
+[[ $QUIET -eq 0 ]] && { echo -e "${GREEN}[ok] Merged profile: $PROFDATA_FILE${NC}"; echo ""; }
 
 # Generate text summary (per-file table)
 # Filter to libpolyml/ source files; exclude system headers and basis library
-echo -e "${GREEN}[*] Generating per-file text summary...${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Generating per-file text summary...${NC}"
 TEXT_REPORT="${OUT_DIR}/coverage_report.txt"
 "$LLVM_COV_BIN" report "$POLY_BIN" \
     -instr-profile="$PROFDATA_FILE" \
@@ -212,10 +217,10 @@ TEXT_REPORT="${OUT_DIR}/coverage_report.txt"
     > "$TEXT_REPORT" 2>&1 || {
     echo -e "${YELLOW}[!] llvm-cov report returned non-zero; partial output may still be useful${NC}"
 }
-echo -e "${GREEN}[ok] Text report: $TEXT_REPORT${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[ok] Text report: $TEXT_REPORT${NC}"
 
 # Generate HTML report with line-level highlighting
-echo -e "${GREEN}[*] Generating HTML report...${NC}"
+[[ $QUIET -eq 0 ]] && echo -e "${GREEN}[*] Generating HTML report...${NC}"
 HTML_DIR="${OUT_DIR}/html"
 "$LLVM_COV_BIN" show "$POLY_BIN" \
     -instr-profile="$PROFDATA_FILE" \
@@ -227,37 +232,41 @@ HTML_DIR="${OUT_DIR}/html"
     >/dev/null 2>&1 || {
     echo -e "${YELLOW}[!] HTML generation returned non-zero; check $HTML_DIR${NC}"
 }
-echo -e "${GREEN}[ok] HTML report: $HTML_DIR/index.html${NC}"
-echo ""
+[[ $QUIET -eq 0 ]] && { echo -e "${GREEN}[ok] HTML report: $HTML_DIR/index.html${NC}"; echo ""; }
 
-# Print the relevant portion of the text report to terminal
-# Focus on libpolyml/ source files
-echo -e "${BLUE}================================================================${NC}"
-echo -e "${BLUE}  Coverage Summary: libpolyml/ source files                     ${NC}"
-echo -e "${BLUE}================================================================${NC}"
-echo ""
+# Extract headline numbers
+TOTAL_COV=$(grep "^TOTAL" "$TEXT_REPORT" | awk '{print $NF}' | head -1)
+ARM64_COV=$(grep "arm64.cpp" "$TEXT_REPORT" | awk '{print $NF}' | head -1)
 
-# Print header line then matching rows
-head -3 "$TEXT_REPORT" || true
-echo ""
-grep "libpolyml" "$TEXT_REPORT" | sort -t'%' -k1 -rn || {
-    echo -e "${YELLOW}    (no libpolyml lines found in report; check $TEXT_REPORT)${NC}"
-}
-echo ""
-grep "^TOTAL" "$TEXT_REPORT" || true
-
-echo ""
-echo -e "${BLUE}================================================================${NC}"
-echo -e "${GREEN}[ok] Key files to examine:${NC}"
-echo -e "  scanner.cpp        (lexer)"
-echo -e "  parse_dec.cpp      (top-level declaration parser)"
-echo -e "  parse_type.cpp     (type expression parser)"
-echo -e "  parse_expr.cpp     (expression parser, if present)"
-echo -e "  arm64.cpp          (ARM64 code generator; ub1 location)"
-echo ""
-echo -e "${YELLOW}Full results:${NC}"
-echo -e "  Text summary:  $TEXT_REPORT"
-echo -e "  HTML report:   $HTML_DIR/index.html"
-echo ""
-echo -e "${YELLOW}To rerun llvm-cov manually against the merged profile:${NC}"
-echo -e "  $LLVM_COV_BIN report $POLY_BIN -instr-profile=$PROFDATA_FILE"
+if [[ $QUIET -eq 1 ]]; then
+    echo -e "${GREEN}  [ok] Coverage: ${TOTAL_COV:-n/a} total, arm64.cpp: ${ARM64_COV:-n/a}${NC}"
+    echo -e "${GREEN}       $TEXT_REPORT${NC}"
+else
+    # Print the relevant portion of the text report to terminal
+    echo -e "${BLUE}================================================================${NC}"
+    echo -e "${BLUE}  Coverage Summary: libpolyml/ source files                     ${NC}"
+    echo -e "${BLUE}================================================================${NC}"
+    echo ""
+    head -3 "$TEXT_REPORT" || true
+    echo ""
+    grep "libpolyml" "$TEXT_REPORT" | sort -t'%' -k1 -rn || {
+        echo -e "${YELLOW}    (no libpolyml lines found in report; check $TEXT_REPORT)${NC}"
+    }
+    echo ""
+    grep "^TOTAL" "$TEXT_REPORT" || true
+    echo ""
+    echo -e "${BLUE}================================================================${NC}"
+    echo -e "${GREEN}[ok] Key files to examine:${NC}"
+    echo -e "  scanner.cpp        (lexer)"
+    echo -e "  parse_dec.cpp      (top-level declaration parser)"
+    echo -e "  parse_type.cpp     (type expression parser)"
+    echo -e "  parse_expr.cpp     (expression parser, if present)"
+    echo -e "  arm64.cpp          (ARM64 code generator; ub1 location)"
+    echo ""
+    echo -e "${YELLOW}Full results:${NC}"
+    echo -e "  Text summary:  $TEXT_REPORT"
+    echo -e "  HTML report:   $HTML_DIR/index.html"
+    echo ""
+    echo -e "${YELLOW}To rerun llvm-cov manually against the merged profile:${NC}"
+    echo -e "  $LLVM_COV_BIN report $POLY_BIN -instr-profile=$PROFDATA_FILE"
+fi

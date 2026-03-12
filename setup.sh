@@ -97,16 +97,14 @@ fi
 # -------------------------------------------------------
 echo ""
 echo -e "${BLUE}[3/5] Verifying build${NC}"
-echo ""
-"${SCRIPT_DIR}/scripts/verify-build.sh"
+"${SCRIPT_DIR}/scripts/verify-build.sh" --quiet
 
 # -------------------------------------------------------
 # Step 4: Validate seed corpus
 # -------------------------------------------------------
 echo ""
 echo -e "${BLUE}[4/5] Validating seed corpus${NC}"
-echo ""
-"${SCRIPT_DIR}/scripts/validate-seeds.sh"
+"${SCRIPT_DIR}/scripts/validate-seeds.sh" --quiet
 
 # -------------------------------------------------------
 # Step 5: Build coverage-instrumented Poly/ML binary
