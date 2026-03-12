@@ -99,7 +99,7 @@ LAUNCH_CMD+=" --duration ${DURATION}"
 LAUNCH_CMD+=" --instances ${INSTANCES}"
 LAUNCH_CMD+=" --name ${CAMPAIGN_NAME}"
 [[ "$USE_EVOLVED" -eq 1 ]] && LAUNCH_CMD+=" --use-evolved"
-LAUNCH_CMD+="; echo ''; echo '[done] Campaign finished. Press Enter to close.'; read"
+LAUNCH_CMD+="; echo ''; echo '[done] Campaign finished. Press Enter to close tmux session.'; read; tmux kill-session -t \"${SESSION}\""
 
 # Monitor window: wait for the results dir to exist, then start watch
 MONITOR_CMD="cd ${PROJECT_ROOT}"
