@@ -4,7 +4,7 @@
 ## Usage:
 ##   make smoke                                         # 30-min validation run
 ##   make phase1                                        # full Phase 1 campaign (3 days)
-##   make phase2 EVOLVED=phase1-lexer-YYYYMMDD-HHMMSS  # Phase 2 with evolved seeds
+##   make phase2 EVOLVED=phase1-lexer-YYYYMMDD-HHMMSS   # Phase 2 with evolved seeds
 ##   make monitor  CAMPAIGN=phase1-lexer-YYYYMMDD-HHMMSS
 ##   make report   CAMPAIGN=phase1-lexer-YYYYMMDD-HHMMSS
 ##   make status                                        # list recent campaigns
