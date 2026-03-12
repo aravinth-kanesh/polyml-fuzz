@@ -75,7 +75,7 @@ The ARM64 Linux pipeline is fully operational. Key validation criteria met:
 
 **Date:** 11/03/2026
 
-**Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 1 vCPU, 1 GB RAM)
+**Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 8 GB RAM)
 
 **Duration:** 30 minutes (1800 seconds)
 
@@ -108,11 +108,11 @@ path and are not indicative of Poly/ML bugs.
 
 ### Exec/sec Drop
 
-Exec/sec fell from ~1,016 at the start of the run to ~157 by the end. This is attributable
-to memory pressure: the UTM VM was configured with only 1 GB RAM, and as the evolved corpus
-grew to hundreds of entries, the fork-server's memory footprint exceeded available RAM,
-causing heavy swapping. This is a VM configuration constraint only. The production ARM64
-instance (4 OCPUs, 24 GB RAM) will not be subject to this.
+Exec/sec fell from ~1,016 at the start of the run to ~157 by the end. The likely cause is
+I/O load from AFL++ writing an increasingly large evolved corpus (growing from 35 seeds to
+hundreds of queue entries) combined with running only 2 instances on a QEMU virtualised
+disk. This is expected virtualisation overhead; the production ARM64 instance on bare-metal
+with faster storage will not be affected.
 
 ### Infrastructure Issues Found and Fixed
 
@@ -147,36 +147,69 @@ constraint, not a framework issue.
 
 ---
 
-## Smoke Test 3 - EC2 Phase 1 (Planned)
+## Smoke Test 3 - UTM VM Workflow Validation (Planned)
 
-**Platform:** AWS EC2 ARM64 (Ubuntu 22.04) or Oracle Cloud Ampere A1
+**Platform:** Ubuntu 22.04.5 LTS ARM64 (UTM VM on Apple M2, 8 GB RAM) - same environment as ST1/ST2
 
-**Purpose:** Validate `ec2-setup.sh` end-to-end on a bare-metal ARM64 Linux instance,
-confirm exec/sec >1,000 without memory pressure, and verify `start.sh`/`fuzz.sh`/`Makefile`
-workflow on a remote instance before committing to a 3-4 day Phase 1 campaign.
+**Duration:** ~10 minutes (600 seconds) - enough to confirm workflow, not a performance test
+
+**Instances:** 4
+
+**Purpose:** Validate the new usability tooling added after Smoke Test 2 (`fuzz.sh`
+interactive wizard, `campaign/start.sh` tmux launcher, and `Makefile` targets) before
+spending cloud credits on EC2. The UTM VM already has poly built and AFL++ installed,
+so this costs nothing.
 
 **Expected criteria to pass:**
+- `fuzz.sh` prompts display correctly and pass arguments through to `start.sh`
+- `start.sh` opens a tmux session with three correctly-named windows (fuzzer, monitor, analytics)
+- `make smoke` completes without error
+- Phase 1 -> Phase 2 `--evolved` handoff: evolved corpus entries visible in Phase 2 `queue/`
+- `campaign/analyse.sh` post-campaign one-liner runs without error
+
+*Results to be filled in after run.*
+
+---
+
+## Smoke Test 4 - EC2 Phase 1 (Planned)
+
+**Platform:** AWS EC2 ARM64 (Ubuntu 22.04)
+
+**Duration:** 30 minutes (1800 seconds)
+
+**Instances:** 4
+
+**Purpose:** Validate `ec2-setup.sh` end-to-end on a bare-metal ARM64 instance (fresh
+install, no pre-built binaries) and confirm performance without the RAM pressure seen on
+the 1 GB UTM VM. This is the final gate before committing to a multi-day Phase 1 campaign.
+
+**Expected criteria to pass:**
+- `ec2-setup.sh` completes without error on a fresh Ubuntu 22.04 ARM64 instance
 - `verify-build.sh` reports poly binary instrumented
-- `exec/sec > 1,000` sustained
+- `exec/sec > 1,000` sustained throughout the run
 - `edges found > 500` after 30 minutes
-- No unexpected sig:09 crashes (would indicate Linux config issue)
+- No unexpected sig:09 crashes (would indicate a Linux config issue, not a macOS artefact)
 - `analytics.sh` saturation CSV logs without error
 
 *Results to be filled in after run.*
 
 ---
 
-## Smoke Test 4 - EC2 Phase 2 with Evolved Corpus (Planned)
+## Smoke Test 5 - EC2 Phase 2 with Evolved Corpus (Planned)
 
-**Platform:** AWS EC2 ARM64 (Ubuntu 22.04) or Oracle Cloud Ampere A1
+**Platform:** AWS EC2 ARM64 (Ubuntu 22.04)
 
-**Purpose:** Validate the Phase 1 -> Phase 2 handoff: confirm that the evolved corpus from
-Smoke Test 3 is correctly passed to Phase 2 via `--evolved`, and that Phase 2 seeds
-(Subset B: stress/, modules/, datatypes/) load and mutate correctly.
+**Duration:** 30 minutes (1800 seconds)
+
+**Instances:** 4
+
+**Purpose:** Validate the full Phase 1 -> Phase 2 handoff on a remote instance: confirm
+that the evolved corpus from Smoke Test 4 is correctly passed via `--evolved`, and that
+Phase 2 seeds (Subset B: stress/, modules/, datatypes/) load and mutate correctly.
 
 **Expected criteria to pass:**
 - Phase 2 campaign starts with evolved corpus entries visible in `queue/`
-- `edges found` after 30 minutes comparable to Smoke Test 3 (seeds cover different paths)
-- No regression in exec/sec vs Smoke Test 3
+- `edges found` after 30 minutes in the expected range (1,500+)
+- No regression in exec/sec vs Smoke Test 4
 
 *Results to be filled in after run.*
