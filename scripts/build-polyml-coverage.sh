@@ -127,8 +127,7 @@ fi
 # Sanity check: confirm the binary emits profraw data when run
 echo -e "${GREEN}[*] Sanity check: confirming coverage data is emitted...${NC}"
 SANITY_PROFRAW=$(mktemp /tmp/sanity_XXXXXX.profraw)
-LLVM_PROFILE_FILE="$SANITY_PROFRAW" \
-    echo 'val _ = 1;' | "$POLY_BIN" >/dev/null 2>&1 || true
+echo 'val _ = 1;' | LLVM_PROFILE_FILE="$SANITY_PROFRAW" "$POLY_BIN" >/dev/null 2>&1 || true
 if [ ! -s "$SANITY_PROFRAW" ]; then
     echo -e "${RED}[!] Coverage profraw not generated. Instrumentation may not be working.${NC}"
     rm -f "$SANITY_PROFRAW"
