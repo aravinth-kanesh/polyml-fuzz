@@ -95,7 +95,7 @@ These seeds exercise lexer tokenisation: identifiers, operators, literals, neste
 
 ```bash
 # Start Phase 1 (3 days = 259200 seconds, 2 instances)
-./campaign/launch.sh --phase 1 --duration 259200 --instances 2
+./campaign/launch.sh --phase 1 --duration 259200 --instances 4
 
 # In a second terminal - track coverage saturation hourly
 ./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
@@ -112,7 +112,7 @@ These seeds exercise the parser with deeply nested structures, module hierarchie
 
 ```bash
 # Start Phase 2
-./campaign/launch.sh --phase 2 --duration 259200 --instances 2
+./campaign/launch.sh --phase 2 --duration 259200 --instances 4
 ```
 
 ### When to stop early

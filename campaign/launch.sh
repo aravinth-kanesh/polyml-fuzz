@@ -28,7 +28,7 @@
 #                   Gives the real campaign a head start on interesting mutations.
 #
 # Example:
-#   ./campaign/launch.sh --phase 1 --duration 259200 --instances 2 --use-evolved
+#   ./campaign/launch.sh --phase 1 --duration 259200 --instances 4 --use-evolved
 
 set -euo pipefail
 
@@ -52,7 +52,7 @@ GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; BLUE='\033[0;34m'; NC
 # Defaults
 PHASE=""
 DURATION=259200          # 3 days in seconds
-INSTANCES=2              # 2 instances for AWS EC2 free tier ARM64
+INSTANCES=4              # 4 instances for ARM64 production campaigns
 CAMPAIGN_NAME=""
 USE_EVOLVED=0
 
@@ -74,7 +74,7 @@ done
 
 if [[ -z "$PHASE" ]]; then
     echo -e "${RED}[!] --phase is required (1 or 2)${NC}"
-    echo -e "    Usage: $0 --phase 1 [--duration 259200] [--instances 2]"
+    echo -e "    Usage: $0 --phase 1 [--duration 259200] [--instances 4]"
     exit 1
 fi
 

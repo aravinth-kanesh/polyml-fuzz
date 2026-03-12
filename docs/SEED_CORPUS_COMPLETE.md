@@ -94,7 +94,7 @@ Seeds are split into two subsets aligned with the phased campaign:
 
 5. **Launch campaign:**
    ```bash
-   ./campaign/launch.sh --phase 1 --duration 259200 --instances 2
+   ./campaign/launch.sh --phase 1 --duration 259200 --instances 4
    ```
 
 ### Expected Results
