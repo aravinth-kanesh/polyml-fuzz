@@ -103,9 +103,43 @@ fi
 
 echo ""
 
+# Run the campaign (blocks until the tmux session ends and analysis completes)
 # shellcheck disable=SC2086
-exec "${SCRIPT_DIR}/campaign/start.sh" \
+"${SCRIPT_DIR}/campaign/start.sh" \
     --phase "$PHASE" \
     --duration "$DURATION" \
     --instances "$INSTANCES" \
     $EVOLVED_ARG
+
+# Phase 1 -> Phase 2 handoff
+if [[ "$PHASE" == "1" ]]; then
+    PHASE1_CAMPAIGN=""
+    if [[ -f "${SCRIPT_DIR}/results/.last-campaign" ]]; then
+        PHASE1_CAMPAIGN=$(cat "${SCRIPT_DIR}/results/.last-campaign")
+    fi
+
+    if [[ -n "$PHASE1_CAMPAIGN" ]]; then
+        echo ""
+        echo -e "${GREEN}+============================================+${NC}"
+        echo -e "${GREEN}  Phase 1 complete                            ${NC}"
+        echo -e "${GREEN}+============================================+${NC}"
+        echo -e "  Campaign: ${BLUE}${PHASE1_CAMPAIGN}${NC}"
+        echo ""
+        if confirm "Launch Phase 2 (parser corpus) with evolved seeds from Phase 1?"; then
+            echo ""
+            DURATION2=$(ask "Phase 2 duration in seconds" "$DURATION")
+            echo ""
+            # shellcheck disable=SC2086
+            exec "${SCRIPT_DIR}/campaign/start.sh" \
+                --phase 2 \
+                --duration "$DURATION2" \
+                --instances "$INSTANCES" \
+                --evolved "$PHASE1_CAMPAIGN"
+        else
+            echo -e "${YELLOW}Phase 2 skipped. To run later:${NC}"
+            echo -e "  ./fuzz.sh  (select Phase 2, use evolved: ${PHASE1_CAMPAIGN})"
+        fi
+    fi
+fi
+
+echo -e "${GREEN}Done.${NC}"
