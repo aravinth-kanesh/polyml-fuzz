@@ -4,7 +4,8 @@
 # Runs the full post-campaign workflow in sequence:
 #   1. collect-crashes.sh  - gather and deduplicate crash inputs from all fuzzers
 #   2. triage.sh           - reproduce and classify each crash
-#   3. report.sh           - generate Markdown campaign summary
+#   3. coverage-report.sh  - generate LLVM source coverage report (must run before report.sh)
+#   4. report.sh           - generate Markdown campaign summary (reads coverage_report.txt)
 #
 # Usage:
 #   ./campaign/analyse.sh <campaign-name>
@@ -48,11 +49,7 @@ echo -e "${BLUE}[2/4] Triaging crashes...${NC}"
 "${SCRIPT_DIR}/triage.sh" "$CAMPAIGN_NAME" --quiet
 echo ""
 
-echo -e "${BLUE}[3/4] Generating campaign report...${NC}"
-"${SCRIPT_DIR}/report.sh" "$CAMPAIGN_NAME" --quiet
-echo ""
-
-echo -e "${BLUE}[4/4] Source coverage report...${NC}"
+echo -e "${BLUE}[3/4] Source coverage report...${NC}"
 EVOLVED_QUEUE="${CAMPAIGN_DIR}/fuzzer01/queue"
 COVERAGE_OUT="${CAMPAIGN_DIR}/coverage"
 if [[ ! -f "$COVERAGE_BIN" ]]; then
@@ -67,6 +64,10 @@ else
         --output "$COVERAGE_OUT" \
         --quiet
 fi
+echo ""
+
+echo -e "${BLUE}[4/4] Generating campaign report...${NC}"
+"${SCRIPT_DIR}/report.sh" "$CAMPAIGN_NAME" --quiet
 echo ""
 
 echo -e "${GREEN}+============================================+${NC}"
