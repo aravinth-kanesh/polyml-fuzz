@@ -28,8 +28,10 @@ if [[ ! -d "$CAMPAIGN_DIR" ]]; then
     echo -e "${RED}[!] Campaign not found: $CAMPAIGN_NAME${NC}"; exit 1
 fi
 
-# Running status
-RUNNING_FUZZERS=$(pgrep -c -f "afl-fuzz.*-o.*${CAMPAIGN_NAME}" 2>/dev/null || echo 0)
+# Running status — use afl-whatsup to avoid double-counting fork server children
+RUNNING_FUZZERS=$(afl-whatsup -s "${RESULTS_DIR}/${CAMPAIGN_NAME}" 2>/dev/null \
+    | grep "Fuzzers alive" | awk '{print $NF}' || echo 0)
+[[ -z "$RUNNING_FUZZERS" || ! "$RUNNING_FUZZERS" =~ ^[0-9]+$ ]] && RUNNING_FUZZERS=0
 
 echo -e "${GREEN}+============================================+${NC}"
 echo -e "${GREEN}|  Poly/ML Fuzzing Campaign Monitor          |${NC}"
