@@ -191,7 +191,7 @@ UBSAN_OPTIONS=print_stacktrace=1 \
 
 ## Pre-Campaign Findings
 
-**ub1** -- UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (a factorial function and a simple algebraic datatype). This is ARM64-specific and reproducible on both macOS and Linux ARM64. Found before the main campaign; not counted as a campaign result.
+**ub1** - UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (a factorial function and a simple algebraic datatype). This is ARM64-specific and reproducible on both macOS and Linux ARM64. Found before the main campaign; not counted as a campaign result.
 
 ```bash
 poly < results/early-findings/ub1/inputs/seed_fun.sml
