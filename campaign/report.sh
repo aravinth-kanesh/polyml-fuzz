@@ -141,11 +141,12 @@ COVERAGE_DIR="${CAMPAIGN_DIR}/coverage"
 COVERAGE_TOTAL=""
 COVERAGE_ARM64=""
 if [[ -f "${COVERAGE_DIR}/coverage_report.txt" ]]; then
-    COVERAGE_TOTAL=$(grep "^TOTAL" "${COVERAGE_DIR}/coverage_report.txt" | awk '{print $NF}' | head -1)
-    COVERAGE_ARM64=$(grep "arm64.cpp" "${COVERAGE_DIR}/coverage_report.txt" | awk '{print $NF}' | head -1)
+    # Column 4 = region coverage percentage (not $NF which is branch coverage)
+    COVERAGE_TOTAL=$(grep "^TOTAL" "${COVERAGE_DIR}/coverage_report.txt" | awk '{print $4}' | head -1)
+    COVERAGE_ARM64=$(grep "arm64.cpp" "${COVERAGE_DIR}/coverage_report.txt" | awk '{print $4}' | head -1)
 fi
 
-# Triage summary
+# Crash triage summary
 TRIAGE_DIR="${CAMPAIGN_DIR}/triaged"
 UBSAN_COUNT=0; ASAN_COUNT=0; SIGNAL_COUNT=0
 
@@ -157,6 +158,22 @@ if [[ -d "$TRIAGE_DIR" ]]; then
             UndefinedBehavior*) (( UBSAN_COUNT++ ))  || true ;;
             Heap*|Stack*|Use*)  (( ASAN_COUNT++ ))   || true ;;
             Signal*)            (( SIGNAL_COUNT++ )) || true ;;
+        esac
+    done
+fi
+
+# Hang triage summary
+HANG_TRIAGE_DIR="${CAMPAIGN_DIR}/triaged-hangs"
+CONFIRMED_HANGS=0; HANG_THEN_CRASH=0; NOT_REPRODUCED_HANGS=0
+
+if [[ -d "$HANG_TRIAGE_DIR" ]]; then
+    for summary in "${HANG_TRIAGE_DIR}"/*.summary; do
+        [[ ! -f "$summary" ]] && continue
+        htype=$(grep "^Type:" "$summary" | cut -d' ' -f2-)
+        case "$htype" in
+            ConfirmedHang)   (( CONFIRMED_HANGS++ ))     || true ;;
+            HangThenCrash)   (( HANG_THEN_CRASH++ ))     || true ;;
+            NotReproduced)   (( NOT_REPRODUCED_HANGS++ )) || true ;;
         esac
     done
 fi
@@ -191,13 +208,15 @@ Generated: $(date)
 
 ## Findings
 
-| Category        | Count        |
-|-----------------|--------------|
-| Unique crashes  | ${TOTAL_CRASHES} |
-| Hangs           | ${TOTAL_HANGS}   |
-| UBSan bugs      | ${UBSAN_COUNT}   |
-| ASan bugs       | ${ASAN_COUNT}    |
-| Signal crashes  | ${SIGNAL_COUNT}  |
+| Category              | Count        |
+|-----------------------|--------------|
+| Unique crashes        | ${TOTAL_CRASHES} |
+| UBSan bugs            | ${UBSAN_COUNT}   |
+| ASan bugs             | ${ASAN_COUNT}    |
+| Signal crashes        | ${SIGNAL_COUNT}  |
+| Unique hangs (total)  | ${TOTAL_HANGS}   |
+| Confirmed hangs       | ${CONFIRMED_HANGS} |
+| Hang-then-crash       | ${HANG_THEN_CRASH} |
 
 ## Corpus Evolution
 
@@ -237,7 +256,9 @@ To reproduce any crash:
 |-----------------------|-----------------------------------------------|
 | AFL++ output          | \`results/${CAMPAIGN_NAME}/fuzzer*/\`           |
 | Collected crashes     | \`results/${CAMPAIGN_NAME}/collected-crashes/\` |
-| Triaged summaries     | \`results/${CAMPAIGN_NAME}/triaged/\`           |
+| Triaged crashes       | \`results/${CAMPAIGN_NAME}/triaged/\`           |
+| Collected hangs       | \`results/${CAMPAIGN_NAME}/collected-hangs/\`   |
+| Triaged hangs         | \`results/${CAMPAIGN_NAME}/triaged-hangs/\`     |
 | Analytics CSV         | \`results/${CAMPAIGN_NAME}/analytics/edges_over_time.csv\` |
 | Saturation log        | \`results/${CAMPAIGN_NAME}/analytics/saturation.log\` |
 MDEOF
@@ -261,6 +282,9 @@ else
     printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  UBSan:"  "$UBSAN_COUNT"
     printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  ASan:"   "$ASAN_COUNT"
     printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  Signal:" "$SIGNAL_COUNT"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Unique hangs:" "$TOTAL_HANGS"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  Confirmed:" "$CONFIRMED_HANGS"
+    printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "  Hang+crash:" "$HANG_THEN_CRASH"
     echo -e "${GREEN}+============================================+${NC}"
     if [[ -n "$COVERAGE_TOTAL" ]]; then
         printf "${GREEN}|${NC}  %-22s %-18s ${GREEN}|${NC}\n" "Source coverage:" "$COVERAGE_TOTAL"
