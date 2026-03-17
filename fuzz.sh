@@ -130,6 +130,28 @@ if [[ "$PHASE" == "1" ]]; then
         echo ""
         if confirm "Launch Phase 2 (parser corpus) with evolved seeds from Phase 1?"; then
             echo ""
+
+            # Optional: minimise evolved corpus with afl-cmin before Phase 2
+            EVOLVED_DIR="${SCRIPT_DIR}/seeds/evolved"
+            POLY="${SCRIPT_DIR}/build/polyml-instrumented/install/bin/poly"
+            if confirm "Run afl-cmin to minimise evolved corpus before Phase 2? (recommended; improves throughput)"; then
+                CMIN_OUT="${SCRIPT_DIR}/seeds/evolved-cmin"
+                echo -e "${BLUE}[*] Running afl-cmin on evolved corpus...${NC}"
+                mkdir -p "$CMIN_OUT"
+                if afl-cmin -i "$EVOLVED_DIR" -o "$CMIN_OUT" -- "$POLY" > /dev/null 2>&1; then
+                    BEFORE=$(find "$EVOLVED_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')
+                    AFTER=$(find "$CMIN_OUT" -maxdepth 1 -type f | wc -l | tr -d ' ')
+                    echo -e "${GREEN}[ok] Corpus minimised: ${BEFORE} -> ${AFTER} seeds${NC}"
+                    # Swap in the minimised corpus
+                    mv "$EVOLVED_DIR" "${EVOLVED_DIR}-pre-cmin"
+                    mv "$CMIN_OUT" "$EVOLVED_DIR"
+                else
+                    echo -e "${YELLOW}[!] afl-cmin failed; using original evolved corpus${NC}"
+                    rm -rf "$CMIN_OUT"
+                fi
+                echo ""
+            fi
+
             DURATION2=$(ask "Phase 2 duration in seconds" "$DURATION")
             echo ""
             # shellcheck disable=SC2086

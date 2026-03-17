@@ -86,7 +86,11 @@ fi
 # Subset A (Phase 1): lexer-focused seeds (simple tokens, operators, edge cases)
 SUBSET_A_DIRS=("basic" "operators" "edge-cases" "regression")
 # Subset B (Phase 2): parser-focused seeds (nested structures, modules, complex types)
+# seeds/isabelle/ is included if present (populated by scripts/fetch-isabelle-seeds.sh)
 SUBSET_B_DIRS=("stress" "modules" "datatypes")
+if [[ -d "${SEEDS_DIR}/isabelle" ]] && [[ -n "$(ls -A "${SEEDS_DIR}/isabelle" 2>/dev/null)" ]]; then
+    SUBSET_B_DIRS+=("isabelle")
+fi
 
 if [[ "$PHASE" == "1" ]]; then
     CORPUS_DIRS=("${SUBSET_A_DIRS[@]}")
@@ -183,8 +187,13 @@ export AFL_NO_AFFINITY=0
 export AFL_USE_ASAN=1
 export AFL_USE_UBSAN=1
 
-# Input timeout: 10 seconds per test case (Poly/ML can be slow on complex inputs)
-TIMEOUT="10000"
+# Disable leak detection: we care about crashes/hangs, not memory leaks;
+# leak checking adds overhead that reduces throughput without improving bug discovery
+export ASAN_OPTIONS="detect_leaks=0:abort_on_error=1:halt_on_error=1"
+
+# Input timeout: 5 seconds per test case (reduced from 10s to improve throughput;
+# legitimate inputs complete well within 5s; hangs are still caught at this limit)
+TIMEOUT="5000"
 
 # Record campaign start
 START_TIME=$(date +%s)
@@ -218,7 +227,8 @@ declare -a FUZZER_PIDS=()
 launch_fuzzer() {
     local name="$1"
     local role_flag="$2"   # "-M" for main, "-S" for secondary
-    local schedule="$3"    # power schedule: "explore" for main, "fast" for secondaries
+    local schedule="$3"    # power schedule: "explore" for main, "fast"/"rare" for secondaries
+    local cmplog="${4:-0}" # 1 = enable CMPLOG on this instance
     local run_log="${LOG_DIR}/${CAMPAIGN_NAME}-${name}.log"
 
     local afl_cmd=(
@@ -231,6 +241,12 @@ launch_fuzzer() {
             -m none
             -a text        # SML source is ASCII text; prevents binary byte insertion
     )
+
+    # CMPLOG: log comparison operands and mutate inputs to match them;
+    # helps AFL++ solve magic-byte checks and integer comparisons in the parser
+    if [[ "$cmplog" -eq 1 ]]; then
+        afl_cmd+=(-c 0)
+    fi
 
     # SML token dictionary: helps AFL++ produce syntactically meaningful mutations
     if [[ -f "$DICT_FILE" ]]; then
@@ -251,13 +267,23 @@ launch_fuzzer() {
     echo -e "  ${GREEN}[ok]${NC} $name (PID ${FUZZER_PIDS[-1]}) -> $run_log"
 }
 
-# Main fuzzer: explore schedule maximises coverage breadth
-launch_fuzzer "fuzzer01" "-M" "explore"
+# Main fuzzer: explore schedule maximises coverage breadth; CMPLOG enabled
+launch_fuzzer "fuzzer01" "-M" "explore" 1
 sleep 3  # Let main fuzzer initialise before secondaries connect
 
-# Secondary fuzzers: fast schedule maximises throughput
+# Secondary fuzzers:
+#   fuzzer02: fast schedule + CMPLOG for comparison-guided mutation
+#   fuzzer03: rare schedule focuses on rarely-hit edges, diversifying exploration
+#   fuzzer04+: fast schedule for throughput
 for i in $(seq 2 "$INSTANCES"); do
-    launch_fuzzer "$(printf "fuzzer%02d" "$i")" "-S" "fast"
+    name="$(printf "fuzzer%02d" "$i")"
+    if [[ "$i" -eq 2 ]]; then
+        launch_fuzzer "$name" "-S" "fast" 1   # CMPLOG secondary
+    elif [[ "$i" -eq 3 ]]; then
+        launch_fuzzer "$name" "-S" "rare" 0   # rare schedule for edge diversity
+    else
+        launch_fuzzer "$name" "-S" "fast" 0
+    fi
     sleep 1
 done
 
