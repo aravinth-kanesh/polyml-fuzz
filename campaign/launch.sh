@@ -23,9 +23,13 @@
 #   These are appropriate for structured text (SML source) without a grammar mutator.
 #
 # Flags:
-#   --use-evolved   Supplement seeds with evolved corpus from seeds/evolved/
-#                   Populated by scripts/prepare-evolved-seeds.sh after a trial campaign.
-#                   Gives the real campaign a head start on interesting mutations.
+#   --use-evolved      Supplement seeds with evolved corpus from seeds/evolved/
+#                      Populated by scripts/prepare-evolved-seeds.sh after a trial campaign.
+#                      Gives the real campaign a head start on interesting mutations.
+#   --grammar-mutator  Enable the SML structure-aware Python custom mutator on fuzzer03+04.
+#                      Requires scripts/sml_mutator.py and Python 3.
+#                      fuzzer01+02 continue with default AFL++ mutations for comparison.
+#                      Use for retry campaigns when byte-level mutation has saturated.
 #
 # Example:
 #   ./campaign/launch.sh --phase 1 --duration 259200 --instances 4 --use-evolved
@@ -55,15 +59,17 @@ DURATION=259200          # 3 days in seconds
 INSTANCES=4              # 4 instances for ARM64 production campaigns
 CAMPAIGN_NAME=""
 USE_EVOLVED=0
+GRAMMAR_MUTATOR=0
 
 # Argument parsing
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --phase)       PHASE="$2";         shift 2 ;;
-        --duration)    DURATION="$2";      shift 2 ;;
-        --instances)   INSTANCES="$2";     shift 2 ;;
-        --name)        CAMPAIGN_NAME="$2"; shift 2 ;;
-        --use-evolved) USE_EVOLVED=1;      shift   ;;
+        --phase)            PHASE="$2";         shift 2 ;;
+        --duration)         DURATION="$2";      shift 2 ;;
+        --instances)        INSTANCES="$2";     shift 2 ;;
+        --name)             CAMPAIGN_NAME="$2"; shift 2 ;;
+        --use-evolved)      USE_EVOLVED=1;      shift   ;;
+        --grammar-mutator)  GRAMMAR_MUTATOR=1;  shift   ;;
         -h|--help)
             sed -n '2,20p' "$0" | sed 's/^# \?//'
             exit 0 ;;
@@ -226,9 +232,10 @@ declare -a FUZZER_PIDS=()
 
 launch_fuzzer() {
     local name="$1"
-    local role_flag="$2"   # "-M" for main, "-S" for secondary
-    local schedule="$3"    # power schedule: "explore" for main, "fast"/"rare" for secondaries
-    local cmplog="${4:-0}" # 1 = enable CMPLOG on this instance
+    local role_flag="$2"      # "-M" for main, "-S" for secondary
+    local schedule="$3"       # power schedule: "explore" for main, "fast"/"rare" for secondaries
+    local cmplog="${4:-0}"    # 1 = enable CMPLOG on this instance
+    local use_grammar="${5:-0}" # 1 = enable SML structure-aware Python custom mutator
     local run_log="${LOG_DIR}/${CAMPAIGN_NAME}-${name}.log"
 
     local afl_cmd=(
@@ -256,11 +263,23 @@ launch_fuzzer() {
     afl_cmd+=(-- "$POLY")
     # Direct fuzzing: poly reads SML from stdin; AFL++ tracks coverage inside poly
 
+    # Grammar mutator: structure-aware Python custom mutator runs alongside AFL++
+    # default mutations (AFL_CUSTOM_MUTATOR_ONLY=0). Targets numeric literal edge
+    # cases, long identifiers, nested expressions, and comment delimiter corruption.
+    local extra_env=()
+    if [[ "$use_grammar" -eq 1 ]] && [[ -f "${PROJECT_ROOT}/scripts/sml_mutator.py" ]]; then
+        extra_env+=(
+            "AFL_PYTHON_MODULE=sml_mutator"
+            "AFL_CUSTOM_MUTATOR_ONLY=0"
+            "PYTHONPATH=${PROJECT_ROOT}/scripts"
+        )
+    fi
+
     if [[ "$DURATION" -gt 0 ]]; then
-        timeout --signal=SIGTERM "$DURATION" "${afl_cmd[@]}" \
+        env "${extra_env[@]}" timeout --signal=SIGTERM "$DURATION" "${afl_cmd[@]}" \
             > "$run_log" 2>&1 &
     else
-        "${afl_cmd[@]}" > "$run_log" 2>&1 &
+        env "${extra_env[@]}" "${afl_cmd[@]}" > "$run_log" 2>&1 &
     fi
 
     FUZZER_PIDS+=($!)
@@ -268,21 +287,21 @@ launch_fuzzer() {
 }
 
 # Main fuzzer: explore schedule maximises coverage breadth; CMPLOG enabled
-launch_fuzzer "fuzzer01" "-M" "explore" 1
+launch_fuzzer "fuzzer01" "-M" "explore" 1 0
 sleep 3  # Let main fuzzer initialise before secondaries connect
 
 # Secondary fuzzers:
 #   fuzzer02: fast schedule + CMPLOG for comparison-guided mutation
-#   fuzzer03: rare schedule focuses on rarely-hit edges, diversifying exploration
-#   fuzzer04+: fast schedule for throughput
+#   fuzzer03: rare schedule focuses on rarely-hit edges; grammar mutator if enabled
+#   fuzzer04+: fast schedule; grammar mutator if enabled (retry campaigns only)
 for i in $(seq 2 "$INSTANCES"); do
     name="$(printf "fuzzer%02d" "$i")"
     if [[ "$i" -eq 2 ]]; then
-        launch_fuzzer "$name" "-S" "fast" 1   # CMPLOG secondary
+        launch_fuzzer "$name" "-S" "fast" 1 0   # CMPLOG secondary, no grammar mutator
     elif [[ "$i" -eq 3 ]]; then
-        launch_fuzzer "$name" "-S" "rare" 0   # rare schedule for edge diversity
+        launch_fuzzer "$name" "-S" "rare" 0 "$GRAMMAR_MUTATOR"   # rare + optional grammar
     else
-        launch_fuzzer "$name" "-S" "fast" 0
+        launch_fuzzer "$name" "-S" "fast" 0 "$GRAMMAR_MUTATOR"   # fast + optional grammar
     fi
     sleep 1
 done
