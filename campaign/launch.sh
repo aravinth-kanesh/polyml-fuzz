@@ -195,7 +195,7 @@ export AFL_USE_UBSAN=1
 
 # Disable leak detection: we care about crashes/hangs, not memory leaks;
 # leak checking adds overhead that reduces throughput without improving bug discovery
-export ASAN_OPTIONS="detect_leaks=0:abort_on_error=1:halt_on_error=1"
+export ASAN_OPTIONS="detect_leaks=0:abort_on_error=1:halt_on_error=1:symbolize=0"
 
 # Input timeout: 5 seconds per test case (reduced from 10s to improve throughput;
 # legitimate inputs complete well within 5s; hangs are still caught at this limit)
