@@ -69,6 +69,16 @@ for label in $LABELS; do
     $SCP "$EC2_HOST:$ec2_dir/collected-crashes" "$local_dir/" 2>/dev/null \
         || echo -e "  ${YELLOW}[skip] collected-crashes/ not found${NC}"
 
+    # Crash triage reports (stack traces, reproduction commands)
+    echo "  -> triaged/"
+    $SCP "$EC2_HOST:$ec2_dir/triaged" "$local_dir/" 2>/dev/null \
+        || echo -e "  ${YELLOW}[skip] triaged/ not found${NC}"
+
+    # Collected hang inputs (actual SML files that cause confirmed hangs)
+    echo "  -> collected-hangs/"
+    $SCP "$EC2_HOST:$ec2_dir/collected-hangs" "$local_dir/" 2>/dev/null \
+        || echo -e "  ${YELLOW}[skip] collected-hangs/ not found${NC}"
+
     # Hang triage summaries
     echo "  -> triaged-hangs/"
     $SCP "$EC2_HOST:$ec2_dir/triaged-hangs" "$local_dir/" 2>/dev/null \
