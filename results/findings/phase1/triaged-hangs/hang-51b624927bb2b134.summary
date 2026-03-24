@@ -1,0 +1,13 @@
+Hang:       hang-51b624927bb2b134
+Type:       ConfirmedHang
+Input size: 1811 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+0.5e~103333333333333333333333333333733333333373333333333333333333333373333333333333333333333333333333333333333333333333333333333333333333333373333333333333333333333333333333;
+infix 6 -;
+infix 7 *;
+inf
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

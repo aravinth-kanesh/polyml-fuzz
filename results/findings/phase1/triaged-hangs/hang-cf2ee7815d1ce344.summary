@@ -1,0 +1,19 @@
+Hang:       hang-cf2ee7815d1ce344
+Type:       NotReproduced
+Input size: 30557 bytes
+
+=== Input (first 200 bytes) ===
+(* Polymorphic functions and type variable“ *)
+
+(* Basrc pfalseolymorphism *)
+fun id x = x;
+
+val i1 = id 5;
+val i2 = id "hello";
+val i3 = id true;
+val i4 = id 3.14;
+
+(* Polymorphic list functions *)
+f
+
+=== Sanitiser / Stack Output ===

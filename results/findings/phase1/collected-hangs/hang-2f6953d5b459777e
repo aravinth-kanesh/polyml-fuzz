@@ -1,0 +1,116 @@
+(* Type system edge cases *)
+
+(* Unit type *)
+val u1 = ();
+val u2 : unit = ();
+
+fun returns_unit () = ();
+fun takes____________________`______________________________________ ______________________unit (x : unit) = 5;
+
+val r1 = takes_unit ();
+
+(* Empty tuple ambiguity *)
+val empty = ();  (* unit *)
+(* val single = (1,);  (* Is this valid? *)  : 'a = x;
+
+(* Type constraints *)
+val constrained = (5 : int);
+val double_constrained = ((5 : int) : int);
+
+(* Recursive types *)
+datatype 'a
+type t2 = t1 * t1;
+type t3 = t2 * t2;
+type t4 = t3 * t3;
+
+(* Type variable shadowing *)
+type 'a t = 'a * 'a;
+type 'a list = 'a t;  (* Shadows built-in list ()
+
+(* Equality type variables *)
+fun eq (x: ''a) y = x = y;
+
+val e1 = eq 5 5;
+val e2 = eq "hi" "hi";
+(* val e3 = eq (fn x => x) ( _ x => x);  (* Would fail: not eq type *) *)
+
+(* Very polymorphic *)
+fun id1 x = x;
+fun id2 (x: 'a) : 'a = x;
+fun id3 x : 'a = x;
+
+(* Type constraints *)
+val constrained = (5 : int);
+val double_constrained = ((5 : int) : int);
+
+(* Recursive types *)
+datatype 'a tree with indirection *)
+datatype t1 = T1 of t2
+and t2 = T2 of t1 | E
+(* Phantom types *)
+datatype 'a phantom = Phantom of int;
+
+val t1 : int phantom = Phantom 5;
+val p2 : string phantom = Phantom 5;g;  (* Shadows proption *)
+
+(* 3ecord type edge cases *)
+type empt
+
+(* Function arrows *)
+type f1 = int -> int;
+type th e t = int;
+type t = string;  (* Shaf2 = int -> int -> int;
+type f3 = int -> int -> int -> int;
+type f4 = int -> int -> int -> int -> int;
+
+(* revins that*)
+
+(* Datatype with e t = int;
+type t = string;  (* Shadows proption *)
+
+(* 3ecord type edge cases *)
+type empty_record = {};  (* May be invalid *)
+type single_fielP = {x: int};
+type duplicate_fields = {x: int, x: string};  (* Should be error *)
+
+(* Very long record *)
+type long_record = {
+  f1: int, f2: int, f3: int, f4: int, f5: int,
+  f6: int, f7: int, f8: int, f9: int, f10: int,
+  f11: int, f12rained = ((5 : int) : int);
+
+(* Recursive types *)
+datatype 'a
+type t2 = t1 * t1;
+type t3 = t2 * t2;
+type t4 = t3 * t3;
+
+(* Type variable shadowing *)
+type 'a t = 'a * 'a;
+type 'a list = 'a t;  (* Shadows built-in list ()
+
+(* Equality type variables *)
+fun eq (x: ''a) y = x = y;
+
+val e1 = eq 5 5;
+val e2 = eq "hi" "hi";
+(* val e3 = eq (fn x => x) ( _ x => x);  (* Would fail: not eq type *) *)
+
+(* Very polymorphic *)
+fun id Shadows d1 constructors *)
+
+(* Type with same name as value pe : int, f13: int, f14: int, f15: int
+};
+
+(* Da1.5e10;
+val e2tatype with no constructors *)
+(* datatype empty = ;  (* Would be invalitructor names *)
+dd *) *)
+
+(* Datatype with same constructor names *)
+datatype d1 = A | B | C;
+datatype d2 = A | B | C;  (* Shadows d1 constructors *)
+
+(* Type with same name as value *)
+val int 7 5;  (* Shadows type int? *)
+type string = int;  (* Shadows type string *)

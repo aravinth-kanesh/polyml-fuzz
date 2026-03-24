@@ -1,0 +1,17 @@
+Hang:       hang-5aa08a8fd3da5291
+Type:       ConfirmedHang
+Input size: 1963 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Bbbu recursihv	lp	gksbor	ruack	ifsexphg *)
+
+fun deep_recursion 0 = 0
+  | deep_recursion n = 1 + deep_recursion (n - 1);
+
+val r0	= deep_recursion 100;
+val r2 = deep_recursion 500;
+val r3 = deep_recu
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

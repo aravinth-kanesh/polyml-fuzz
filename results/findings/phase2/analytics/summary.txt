@@ -1,0 +1,17 @@
+=== Poly/ML Fuzzing Analytics Summary ===
+Campaign:        phase2-parser-20260319-131212
+Last updated:    2026-03-22 13:12:48
+Sample #:        73
+
+=== Coverage ===
+Edges found:     2017
+Last delta:      0
+Saturated:       true (71/3 below threshold)
+
+=== Performance ===
+Exec speed:      ~4 exec/s
+Active fuzzers:  0
+0
+
+=== Findings ===
+Unique crashes:  3

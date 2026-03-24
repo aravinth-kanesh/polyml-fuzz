@@ -1,0 +1,15 @@
+Hang:       hang-0cbf5104f4eae7a3
+Type:       ConfirmedHang
+Input size: 92 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Nested comments (* should *) still work *)
+infix 5 ++
+fun x ++ y = x ++y
+
+val _ = 1 ++ 2
+
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

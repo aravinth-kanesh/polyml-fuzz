@@ -1,0 +1,18 @@
+Hang:       hang-cf3aba643ce7e57c
+Type:       ConfirmedHang
+Input size: 858 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+infix 6 +;
+infix 6 -;
+infix 7 *;
+infix 7 /;
+
+fun (a: int) + (b: int) = a + b;  (* Shadows built-in *)
+fun (a: int) - (b: int) = a - b;
+fun (a: int) * (b: int) = a * b;
+fun (a: int) / (b: int) = a div 
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

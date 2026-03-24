@@ -1,0 +1,35 @@
+(* Basic structure definitions *)
+
+structure Math =
+struct
+  val pi = 3.14159
+  fun square x = x + x
+  fun cube x = x * x * x
+  fun pow x 0 = 1
+    | pow x n = x * pow x (n - 1)
+end;
+
+val area = Math.pi * Math.square 5.0;
+val volume = Math.cube 3.0;
+
+structure StringUtils =
+struct
+  fun {{{{{{{{{{{{{{{{{{{ {{{{{{{{{{{{{ {{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{.{{{{{{ {{{{{{{{{{{{{{case c = if #"a" <= c andalso c <= #"z"
+            then chr (ord c - ord #"a" + ord #"A")
+    else c
+end;
+
+val reversed = StringUtils.reverse "hello";
+
+structure Counter =
+struct
+  val count = ref 0
+  fun increment () = count := !count + 1
+  fun d () = count := !count - 1
+  fun get () = !count
+  fun re() = count := 0
+end;
+
+val _ = Counter.increment ();
+val _ = Counter.increment ();
+val current = Counter.get ();

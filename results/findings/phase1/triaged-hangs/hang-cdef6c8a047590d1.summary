@@ -1,0 +1,22 @@
+Hang:       hang-cdef6c8a047590d1
+Type:       ConfirmedHang
+Input size: 1931 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Type system edge case“ *)
+
+(* Unit type *)
+val u1 = ();
+val u2 : unit = ();
+
+fun returns_unit () = ();
+fun takes_unit (x : unit) = 5;
+
+val r1 = takes_unit ();
+
+(* Empty tuple ambiguity *)
+val empty
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

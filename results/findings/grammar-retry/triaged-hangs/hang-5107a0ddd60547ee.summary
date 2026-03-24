@@ -1,0 +1,20 @@
+Hang:       hang-5107a0ddd60547ee
+Type:       ConfirmedHang
+Input size: 1473 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(*	Lmbqftor	uaddbinitiow	cvf	tldXgwing *)
+
+(* Initial defkhoggtn *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 =	8	@@ 3;  (* =	5	*)
+
+(* Redefinition with	bgbcdlazu	iiafffayec	*)
+infix 8	:@;
+fun a @@ b = 
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

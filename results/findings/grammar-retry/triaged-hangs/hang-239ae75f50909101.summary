@@ -1,0 +1,19 @@
+Hang:       hang-239ae75f50909101
+Type:       NotReproduced
+Input size: 2427 bytes
+
+=== Input (first 200 bytes) ===
+(* Polymorphic functions and type variable“ *)
+
+(* Basic polymorphism *)
+fun id x = x;
+
+val i1 = id 5;
+val i2 = id "hello";
+val i3 = id true;
+val i4 = id 3.14;
+
+(* Polymorphic list functions *)
+fun le
+
+=== Sanitiser / Stack Output ===

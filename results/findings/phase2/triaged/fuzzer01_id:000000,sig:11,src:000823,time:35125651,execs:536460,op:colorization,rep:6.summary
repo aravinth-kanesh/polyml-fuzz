@@ -1,0 +1,6 @@
+Crash: fuzzer01_id:000000,sig:11,src:000823,time:35125651,execs:536460,op:colorization,rep:6
+Type: Signal11
+Location: unknown
+
+=== Sanitiser Output ===
+timeout: the monitored command dumped core

@@ -1,0 +1,32 @@
+(* Operatwn	yfaaahsyouyi	cga	wgcRgyhng *)
+
+(* Initial defimzupjn *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (*	;	7	*)
+
+(* Reeaektunupn with differaok	omdaabbpdc *)
+infix	3	:@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 )(!)	Zbhy	gnffcebwed	ajcjge *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* Luys	<?kyy use	fr	uideru	vrsr	&vp' *)
+
+(*	Jafefine	cq	yydul a @in *)
+infix	5	@@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* With @@	cz	8<	7	=	'6/5*	ir (2@3) +	2>	!(!!	Ipedr	ihadolhjh	*)
+val r6 =
+  let
+				infix 6 @:			 fun a @@ b = a div b
+  in
+    10 @@ 6		end;  (* :	7	rn loeek	ucope *)
+
+(* Back tg	oxcghtql	eafinition *)
+val r7 = 10 @@ 2;  (* Uses deenmuzxjj	aupg	line 06	'*%%	Xrbaxmxxs	qwkq	mfoa	qubaaeajfc	egn	bsdafocwr associatntyhy *)
+infipg	7	***;
+fun d	!&(	d	<	b	)	d?hfi	k2	:	9	$&!	6	&$%	9?		') L‚ft: (2*5$)6	$'sycmzi	9	$($@ayt	f	&"(	c	@	b	#	e:xdw	v8	:	8	'('	8	()"	9<		$#	Zgqry=	8")2#3&	"#)'	Gyrahl	eabtexcvzju	"&oqubzy	<=?hfv	g01	>	xi	;;	$4-	2(@		')	Fek	r	bz	7;	!9)8%	/	3	;	01	(&$$	Xaffemsd	doegj	%(ksdgt	6	?<:czz	e	;=	d	?	e	,	e=ibh	x9	>	0	a	/	0?kfk	k00	@	9	=<	7:		""	:	2	%"

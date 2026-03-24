@@ -1,0 +1,17 @@
+Hang:       hang-2f6953d5b459777e
+Type:       ConfirmedHang
+Input size: 2801 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Type system edge cases *)
+
+(* Unit type *)
+val u1 = ();
+val u2 : unit = ();
+
+fun returns_unit () = ();
+fun takes____________________`______________________________________ ______________________uni
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

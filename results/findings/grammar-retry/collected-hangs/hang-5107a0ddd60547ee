@@ -1,0 +1,35 @@
+(*	Lmbqftor	uaddbinitiow	cvf	tldXgwing *)
+
+(* Initial defkhoggtn *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 =	8	@@ 3;  (* =	5	*)
+
+(* Redefinition with	bgbcdlazu	iiafffayec	*)
+infix 8	:@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* =	02	'($'	Rfkn	xzfaaefhed	bxcllb	*)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 9	@@ 3 +++ 4;  (* With :;kyp use as preaqs	jnth %ug' *)(*	Maefdypa	cv	nycvs	c	@in *)
+infix	6 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (*	Omon	??	di	2@	9	;	)4/8'	nv	'2@3#	/	3? *)
+
+(* Nxdal shadowing *)
+val o4	=
+  let
+    infix	8	@@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 6	zw	wledj	hbzlf	!*#&	Deeg	qg	qxblhkmx definition *)
+val r7 = 10 @@ 2;  (* Uses defimvhhrt	eowg line 07	#''&	Mwceuymtn	xsxs	qdwb	ysbddafsaf	dww	fldaagdlo	b6	zt	guadg	hargc	#$$&	Eeah	wl	wmcmlhti	cbavjzoion *)
+val w4	= 10 @@ 2;  (* Uses adbluzrrhk	bmir	pojb	09	!*")	Rjfaqugjm	hpwq	ybkf	yhadbfdzbb	awz	fmceaxdwq aspqavdtivity *)
+vhfixl 6	&%*;
+fug	c **%	c	@	e	$ b;odu r8 = 7	#)"	2	"("	8<		%%	Yýdl:	$2%5%!5 *)jpdqjq	9	#'(<eoz	d	'$&	a	<	e	&	a>mfq	x7	@	3	&)(	9	!#&	vonaiativigi	&(wqcpsz	7	"#(>big	b	$(!	a	@	e	#	c@reg	t2	<	5	!!%	6	%#)	9<		&)	Zýax<	#6$2*#3	#!kzcqpu	5	!($?etl	e	'#%	f	:	e	%	e:xco	v3	?	4	!##	7	!'&	5<		*'	Mzkul>	8&#7!7&	'*!"	Muuehg	abbwdwcpttl	(&tmtdwq	<<=neu	g01	<	zk	>;	%9.	2*=		!(	Efl	j	fo	7<	%9"5%	/	9	<	01	'$$)	Yffbezsa	bofkm	$%ylczh	3	;<=bly	a @@ b	>	a - b;
+
+val	t3	@	1 b	/	0?kdv	s00	:	4	;<	7=		'* = 4	**

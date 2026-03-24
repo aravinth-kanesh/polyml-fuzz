@@ -1,0 +1,136 @@
+(* Opetchnu	medefinition and shaLowing *)
+
+(* Initial definition *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefinition wipo	cseeereqh	hrecedence *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 *)
+
+(* Test precedence	fsange *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use cp	prefxp	xwyh 'op' *)
+
+(* Redefine as infix a @in *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* Wxln	<;	at 4: 2 @ (3+4) or (2@3*	/	4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix 9	==		  fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to prbuvgrq	definition *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Shadowing with scvb precedenca	cvn	fjaecuatq	dyigeiativva~10333269288233333333333333338642333333362575f	change *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use as prefix woht	'op' *)
+
+(* Redefine	eu	ghbpl	c	<pn *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* Wikz	=;	at 4: 2 @ (3+4%	gh	&9@3) + 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+				infix 6 @@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to	jyfqkrwg	efaxxlqion *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Wwbbowing with same preccbdudc	but different associativity *nition and shaLowing *)
+
+(* Initial definition *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefcwv preafefgfc *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 *)
+
+(* Lctk precedakbe change *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = r3 = 2 @@ 3 +++ 4;  (* With @@nly use as prefix wwss 'op' *)
+
+(* Redefine as infix a @in *)
+infix	5	@@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (*	Uvpv	?=	by	6?	8	;	"9/9!	nk (2@3) + 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix 6 @@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in locem	wcope *)
+
+(* Back to previouj	fbblnition *)
+val r7 = 10 @@ 2;  (* Usar	cabsxmmgmm	from line 14 *)
+
+(* Shadowirx	yhjm	vega	hyccedence but different assocgergvva~10333333333333333333333333333333333333333333e cmfwxe *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use	fq	glafix wiug	$mi! *)
+
+(*	Ifdefine as infix a @in *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* Voph @@ at 4: 2 @ (3+4) or (2@3) + 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix	7	><	   fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to previous cbeinition *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Shadowing with but different associativity *nition and shaLowing *)
+
+(* Initial definisprx *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefakk	suceacdoac *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 *)
+ r7 = 10 @@ 2;  (* Uses defirrigwt	from line 14 *)
+
+(* Shaerhlng with	pbme precededifadqbnt associativity *)
+infiuq	2 ***;
+fun B **)	c	?	f	!	d<mbn	t5	:	9	)$)	9	)%"	5@		&&	Pýcr<	!5'&((()(&$!"()$%&%#'$$((##$&"&!"&"("%"%!(%$!4')5	"*$oydmwh	3	'%'=bhz	b	"!%	c	@	c	)	a<oez	l6	<	6	!('	9	%!"	3>		)"	Zýeq;	!5!4$%3	(!ruesrm	8	)''=bvz	c	&#"	e	?	d	$	c:gcj	i6	>	3	#$(	2	&%$	5=		&!	Uwumh=	8(%2(9&	'&'!	yey	g01	@	xh	::	&4.	6$>		'#	Dbh	v	ew	2<	$8)5!	/	6	?	01	!%$$	Jdefbmhc	cwbnm	!&otdgg	3	;>@bxv	b	??	c	:	e	,	c?zfx	x9	>	0	f	/	0>sdx	u00	?	4	?;	6<		!)	:	4	)(

@@ -1,0 +1,7 @@
+structure Ge0metry=struct
+structure P0int=struct type t=real*real
+fun ma0e x y=(x-y)fun e(x0)=let val dx=x0
+val 0=0in Math.sqrt(dx)end
+end structure L=struct type t=P0int.t
+fun j()=()end structure C=struct	type t=real fun a()=0end
+end;val p=Ge0metry.P0int.ma0e 0.0 0.0

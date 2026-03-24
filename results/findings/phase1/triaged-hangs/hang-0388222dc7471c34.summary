@@ -1,0 +1,10 @@
+Hang:       hang-0388222dc7471c34
+Type:       ConfirmedHang
+Input size: 79764 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

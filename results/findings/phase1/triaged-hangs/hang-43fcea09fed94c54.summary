@@ -1,0 +1,21 @@
+Hang:       hang-43fcea09fed94c54
+Type:       ConfirmedHang
+Input size: 33438 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Polymorphic functions and type variableì *)
+
+(* Basrc pfalseolymorphism *)
+fun id x = x;
+
+val i1 = id 5;
+val i2 = id "hello";
+val i3 = id true;
+val i4 = id 3.14;
+
+(* PoÅymorphic list functions *)
+f
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

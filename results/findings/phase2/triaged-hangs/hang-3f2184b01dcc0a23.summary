@@ -1,0 +1,22 @@
+Hang:       hang-3f2184b01dcc0a23
+Type:       ConfirmedHang
+Input size: 1115 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* OLowing *)
+
+(* Initial definition *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redition with different precedence *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 1
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

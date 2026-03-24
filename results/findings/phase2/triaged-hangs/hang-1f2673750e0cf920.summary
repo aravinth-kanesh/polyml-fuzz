@@ -1,0 +1,17 @@
+Hang:       hang-1f2673750e0cf920
+Type:       ConfirmedHang
+Input size: 1501 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* References and mutabke 
+  | get_elemstate *)
+
+val counter = ref 0;
+
+fun increment () = increment ();
+val _ = increment ();
+val _ = increment ();;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;u
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

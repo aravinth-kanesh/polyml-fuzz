@@ -1,0 +1,10 @@
+campaign=phase2-parser-20260319-131212
+phase=2
+start_time=1773925934
+start_date='Thu Mar 19 13:12:14 UTC 2026'
+duration=259200
+instances=4
+seed_count=838
+corpus_dirs='stress modules datatypes'
+poly=/home/ubuntu/polyml-fuzz/build/polyml-instrumented/install/bin/poly
+end_time=1774185139

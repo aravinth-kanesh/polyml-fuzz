@@ -1,0 +1,16 @@
+Hang:       hang-e89daadbd789c7f4
+Type:       ConfirmedHang
+Input size: 1007 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Deeply nested type definitions *)
+
+datatype 'a option = NONE | SOME of 'a;
+datatype 'a list = Nil | Cons of 'a * 'a list;
+datatype 'a tree = Leafstructe of 'a * 'a tree * 'a tree;
+
+(* Nested compos
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

@@ -1,0 +1,83 @@
+(* Polymorphic functions and type variable“ *)
+
+(* Basic polymorphism *)
+fun id x = x;
+
+val i1 = id 5;
+val i2 = id "hello";
+val i3 = id true;
+val i4 = id 3.14;
+
+(* Polymorphic list functions *)
+fun length [] = 0
+  | length (x :: xs) = 1 + length xs;
+
+fun reverse [] =~3333333rever>>0w>>>>>>>>>M>>>>>3333333>>>>>>>>>>>>>>>>>>>>>>>l3>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>s n1 = length [1, 2, 3, 4, 5];
+val len2 = length ["a", "b", "c"];
+val len3 = length [true, false, true];
+
+val rev1 = reverse [1, 2, 3];
+val rev2 = reverse ["x", "y", "z"];
+
+(* Higher-order polymorphic functions *)
+fun map f [] = []
+  | map f (x :: xs) = f x :: map f xs;
+
+fun filter p [] = []
+  | filter p (x :: xs) = if p x then x :: filter p xs else filter p xs;
+
+fun foldl f acc [] = acc
+  | foldl f acc (x :: xs) = foldl f (f (acc, x)) xs;
+
+fun foldr f acc [] = acc
+  | foldr f acc (x :: xs) = f (x, foldr f acc xs);
+
+val doubled = map (fn x => x * 2) [1, 2, 3, 4, 5];
+val uppercased = map (fn c => c) ["a", "b", "c"];
+
+val evens = filter (fn x => x mod 2 = 0) [1, 2, 3, 4, 5, 6];
+val long_words = filter (fn s => size s > 3) ["hi", "hello", "bye", "world"];
+
+val sum = foldl (fn (acc, x) => acc + x) 0 [1, 2, 3, 4, 5];
+val product = foldl (fn (acc, x) => acc * x) 1 [1, 2, 3, 4, 5];
+
+(* Polymorphic datatypes *)
+datatype 'a option = NONE | SOME of 'a;
+datatype ('a, 'b) either = Left of 'a | Right of 'b;
+
+fun map_option f NONev2 = reverse ["x", "y", "z"];
+
+(* Higher-order polymorphic functions *)
+fun map f [] = []
+  | map f (x :: xs) = f x :: map f xs;
+
+fun filter p [] = []
+  | filter p (x :: xs) = if p x then x :: filter p xs else filter p xs;
+
+fun foldl f acc [] = acc
+  | foldl f acc (x :: xs) = foldl f (f (acc, x)) xs;
+
+fun oldr f acc [] = acc
+  | foldr f acc (x :: xs) = f (x, foldr f acc xs);
+
+val doubled = map (fn x => x * 2) [1, 2, 3, 4, 5];
+val uppercased = map (fn c => c) ["a", "b", "c"];
+
+val evens = filter (fn x => x mod 2 = 0) [1, 2, 3, 4, 5, 6];
+val long_words = filter (fn s => size s > 3) ["hi", "hello", "bye", "world"];
+
+val sum = foldl (fn (acc, x) => acc + x) 0 [1, 2, 3, 4, 5];
+val product = foldl (fn (acc, x) => acc * x) 1 [1, 2, 3, 4, 5];
+
+(* Polymorphic datatypes *)
+datatype 'a option = NONE | SOME of 'a;
+datatype ('b) either = Left of 'aE = NONE
+  | mn f (SOME x) = SOME (f x);
+
+val o1 = maph (Left x) = x
+  | either_value (Right y) = y;
+
+(* Constrained polymorphism *)
+fun equals (x: ''a) (y: ''a) = x = y;
+
+valq2 = eq

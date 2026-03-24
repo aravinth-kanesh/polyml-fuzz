@@ -1,0 +1,20 @@
+Hang:       hang-71c1ead9176f026a
+Type:       ConfirmedHang
+Input size: 28496 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Polymorphic functions and type variable“ *)
+
+(* Basic polymorphism *)
+fun id x = x;
+
+val i1 = id 5;
+val i2 = id "hello";
+val i3 = id true;
+val i4 = id 3.14;
+
+(* Polymorphic list functiiiiiiiiiiiiii
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

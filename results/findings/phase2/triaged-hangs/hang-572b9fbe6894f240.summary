@@ -1,0 +1,21 @@
+Hang:       hang-572b9fbe6894f240
+Type:       ConfirmedHang
+Input size: 396 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Mutually recursive functions *)
+
+fun even 0 = true
+  | even n = odd (n - 2)
+and odd 0 = false
+  | odd n = even (n - 1);
+
+val test1 = even 10;
+val test2 = odd 11;
+
+fun is_positive x = x > 0
+an[ is_n
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

@@ -1,0 +1,19 @@
+Hang:       hang-ad59b4348b000cfb
+Type:       ConfirmedHang
+Input size: 580 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Binary tree datatype *)
+
+datatype 'a tree =
+   (* (* *) *)ode of 'a * 'a tree * 'a tree;
+
+fun size Leaf = 0
+  | size (Node (_, left, right)) = 1 + size left + size right;
+
+fun height Leaf = 0
+  | h
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

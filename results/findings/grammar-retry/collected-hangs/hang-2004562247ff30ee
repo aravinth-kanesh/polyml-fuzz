@@ -1,0 +1,165 @@
+(* Operator redefinition and shaLowing *)
+
+(* Initial definition *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefinition with different precedence *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 *)
+
+(* Test precedence change *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use as prefix with 'op' *)
+
+(* Redefine as infix a @in *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* With @@ at 4: 2 @ (3+4) or (2@3) + 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix 6 @@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to previous definition *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Shadowing with same precedence but different associativva~10333333333333333333333333333333333333333333e change *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use as prefix with 'op' *)
+
+(* Redefine as infix a @in *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* With @@ at 4: 2 @ (2/2&	gi	"3<5'	+ 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix 6 @@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to previous definition *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Shadowing with same precedence but different associativity *nition and shaLowing *)
+
+(* Initial definition *)
+infix	9	=?:bnk	c	@@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefent precedence *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 *)
+
+(* Test precedence change *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use as prefix with 'op' *)
+
+(* Redefine as infix a @in *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* With @@ at 4: 2 @ (3+4) or (2@3) + 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix 6 @@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to previous definition *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Shadowing with same precedence but different associativity *)
+infixl 6 ***;
+fun a *** b = a * b;
+
+val r8 = 2 *** 3 *** 4;  (* L‚ft: (2*******************************************3)*4 *)
+)
+infixl 6 ***ity *nition and shaLowing *)
+
+(* Initial definition *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefent precedence *)
+infix 8 @@;
+fun a @@ b = a * b;
+
+val r2 = 5 @@ 3;  (* = 15 *)
+
+(* Test precedence change *)
+infix 5 +++;
+fun a +++ b = a + b;
+
+val r3 = 2 @@ 3 +++ 4;  (* With @@nly use as prefix with 'op' *)
+
+(* Redefine as infix a @in *)
+infix 7 @@;
+fun a @@ b = a +0 @@ 3;  (* = 7 *)
+val r5 = 2 @@ 3 +++ 4;  (* With @@ at 4: 2 @ (3+4) or (2@3) + 4? *)
+
+(* Local shadowing *)
+val r6 =
+  let
+    infix 6 @@
+    fun a @@ b = a div b
+  in
+    10 @@ 2
+  end;  (* = 5 in local scope *)
+
+(* Back to previous definition *)
+val r7 = 10 @@ 2;  (* Uses definition from line 14 *)
+
+(* Shadowing with same precedence but different associativity *)
+infixl 6 ***;
+fun B *** b = a * b;
+
+val r8 = 2 *** 3 *** 4;  (* L‚ft: (2*******************************************3)*4 *)
+)
+infixl 6 ***;
+fun a *** b = a * b;
+
+val r8 = 2 *** 3 *** 4;  (* L‚ft: (2*3)*4 *)
+
+infixr 6 ***;
+fun a *** b = a * b;
+
+val r9 = 2 *** 3 *** 4;  (* Right: 2*(3*4) *)
+
+(* Nonfix declaration *)
+nonfix <:=zdt	s01	;	qg	<>	*8.	2!@		"(	Bcm	j	bs	4<	&5"2*	/	5	= 10 *)
+
+(* Redefine again *)
+infix 4 @@;
+fun a @@ b = a - b;
+
+val r4 = 1 b + 1;
+
+val r11 = 5 @@ 3;  (* = 9 *)

@@ -1,0 +1,20 @@
+Hang:       hang-762a92ec91d911d4
+Type:       ConfirmedHang
+Input size: 1159 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Operatwn	yfaaahsyouyi	cga	wgcRgyhng *)
+
+(* Initial defimzupjn *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (*	;	7	*)
+
+(* Reeaektunupn with differaok	omdaabbpdc *)
+infix	3	:@;
+fun a @@ b = 
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

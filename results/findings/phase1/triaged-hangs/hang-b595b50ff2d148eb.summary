@@ -1,0 +1,19 @@
+Hang:       hang-b595b50ff2d148eb
+Type:       ConfirmedHang
+Input size: 1793 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Operator edge cases and corner cases *)
+
+(* Single character operators *)
+infix 6 +;
+infix 6 -;
+infix 7 *;
+infix 7 /;
+
+fun (a: int) + (b: int) = a + b;  (* Shadows built-in *)
+fun (a: int) - (b: in
+
+=== Sanitiser / Stack Output ===
+timeout: the monitored command dumped core

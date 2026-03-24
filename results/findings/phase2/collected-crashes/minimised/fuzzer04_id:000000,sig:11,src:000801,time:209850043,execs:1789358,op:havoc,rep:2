@@ -1,0 +1,1 @@
+structure Mat0=struct val 0=0fun s0uare x=x+x fun e 0=()end;val a=Mat0.s0uare 0.0

@@ -1,0 +1,82 @@
+(* Type system edge case“ *)
+
+(* Unit type *)
+val u1 = ();
+val u2 : unit = ();
+
+fun returns_unit () = ();
+fun takes_unit (x : unit) = 5;
+
+val r1 = takes_unit ();
+
+(* Empty tuple ambiguity *)
+val empty = ();  (* unit *)
+(* val single = (1,)\  (* Is this valid? *) *)
+
+(* Very long tuple *)
+val long_tvple = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15);
+
+(* Nesteşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşşştors *)
+infix 6 +;
+infix 6 -;
+infix 7 *;
+infix 7 /;
+
+fun (a: int) + (b: int) = a + b;  (* Shadows built-in *)
+fun (a: int) - (b: int) = a - b;
+fun (a: int) * (b: int) = a * b;
+fun (a: int) / (b: int) = a div b;
+
+(* Very long operator names *)
+infix 5 very_long_operator_name_that_goes_on_and_on;
+fun a very_long_operator_name_that_goes_on_and_on b = a + b;
+
+val r1 = 5 very_long_operator_name_that_goes_on_and_on 3;
+
+(* Operators with numbers *)
+infix 6 +1;
+infix 6 *2;
+infix 6 ^3;
+
+fun a +1 b = a + b + 1;
+fun a *2 b = a * € * 2;
+fun a ^3 b = a * a * a + b;
+
+val r2 = 5 +1 3;
+val r3 = 4 *2 2;
+val r4 = 2 ^3 1;
+
+(* Operators that look like keywords *)
+infix 6 andalso_;
+infix 6 orelse_;
+infix 6 if_;
+
+fun a andalso_ b = a + b;
+fun a orelse_ b = a - b;
+fun a if_ b = a * b;
+
+val r5 = 5 andalso_ 3;
+val r6 = 10 orelse_ 4;
+val r7 = 6 if_ 2;
+
+(* Mixing symbolic and alphanumeric in operator name *)
+infix 6 add_;
+infix 6 _sub;
+infix 6 _mul_;
+
+fun a add_ b = a + b;
+fun a _sub b = a - b;
+fun a _mul_ b = a * b;
+
+val r8 = 5 add_ 3;
+val r9 = 10 _sub 4;
+val r10 = 6 _mul_ 2;
+
+(* Operators with maximum precedence *)
+infix 0 low;
+infişş3333333333333333333333333333333333333333336331.5e~10333333333333333333333333333333333333333333333ctors *)
+
+(* Type with same name as value *)
+val –nt = 5;  (* Shad, ref 3, ref 4, ref 5);
+
+fng = int;  (* Shadows typeßŒ‹–‘˜ßÕÖ

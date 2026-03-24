@@ -1,0 +1,10 @@
+campaign=phase1-lexer-20260316-124325
+phase=1
+start_time=1773665006
+start_date='Mon Mar 16 12:43:26 UTC 2026'
+duration=259200
+instances=4
+seed_count=35
+corpus_dirs='basic operators edge-cases regression'
+poly=/home/ubuntu/polyml-fuzz/build/polyml-instrumented/install/bin/poly
+end_time=1773924211

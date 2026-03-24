@@ -1,0 +1,26 @@
+Hang:       hang-2004562247ff30ee
+Type:       ConfirmedHang
+Input size: 3523 bytes
+Location:   unknown
+
+=== Input (first 200 bytes) ===
+(* Operator redefinition and shaLowing *)
+
+(* Initial definition *)
+infix 6 @@;
+fun a @@ b = a + b;
+
+val r1 = 5 @@ 3;  (* = 8 *)
+
+(* Redefinition with different precedence *)
+infix 8 @@;
+fun a @@ b = 
+
+=== Sanitiser / Stack Output ===
+Warning - Unable to increase stack - interrupting thread
+Warning - Unable to increase stack - interrupting thread
+Warning - Unable to increase stack - interrupting thread
+Warning - Unable to increase stack - interrupting thread
+Warning - Unable to increase stack - interrupting thread
+Warning - Unable to increase stack - interrupting thread
+timeout: the monitored command dumped core
