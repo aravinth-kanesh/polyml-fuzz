@@ -21,14 +21,12 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-declare -A CAMPAIGNS=(
-    ["phase1"]="phase1-lexer-20260316-124325"
-    ["phase2"]="phase2-parser-20260319-131212"
-    ["grammar-retry"]="phase2-parser-20260322-192228"
-)
+LABELS="phase1 phase2 grammar-retry"
+CAMPAIGN_phase1="phase1-lexer-20260316-124325"
+CAMPAIGN_phase2="phase2-parser-20260319-131212"
+CAMPAIGN_grammarretry="phase2-parser-20260322-192228"
 
 SCP="scp -i $EC2_KEY -r"
-SSH="ssh -i $EC2_KEY"
 
 echo ""
 echo "+============================================+"
@@ -47,8 +45,9 @@ fi
 
 mkdir -p "$LOCAL_BASE"
 
-for label in phase1 phase2 grammar-retry; do
-    campaign="${CAMPAIGNS[$label]}"
+for label in $LABELS; do
+    key="${label//-/}"
+    eval "campaign=\$CAMPAIGN_${key}"
     local_dir="$LOCAL_BASE/$label"
     ec2_dir="$EC2_BASE/$campaign"
 
