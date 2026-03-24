@@ -100,7 +100,7 @@ for fuzzer_dir in "${CAMPAIGN_DIR}"/fuzzer*/; do
     # Parse plot_data for final stats
     plot_file="${fuzzer_dir}plot_data"
     if [[ -f "$plot_file" ]]; then
-        last=$(grep -v '^#' "$plot_file" | grep -v '^$' | tail -1)
+        last=$(grep -v '^#' "$plot_file" | grep -v '^$' | tail -1) || true
         if [[ -n "$last" ]]; then
             ncols=$(echo "$last" | awk -F',' '{print NF}')
             # edges_found is column 13 in newer AFL++
