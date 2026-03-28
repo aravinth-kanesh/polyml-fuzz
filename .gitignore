@@ -40,10 +40,6 @@ results/phase2-*/
 # Analytics and launcher logs
 /logs/
 
-# Claude Code
-.claude/
-CLAUDE.md
-
 # IDE
 .vscode/
 .idea/
