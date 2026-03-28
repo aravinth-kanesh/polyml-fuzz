@@ -15,7 +15,7 @@
 
 SHELL     := /bin/bash
 DURATION  ?= 259200
-INSTANCES ?= 2
+INSTANCES ?= 4
 CAMPAIGN  ?=
 EVOLVED   ?=
 
