@@ -235,6 +235,7 @@ cd AFLplusplus && make distclean && make
 ```
 
 **`shmget()` failures on macOS**
+
 Run campaigns on Linux ARM64. macOS System V shared memory limits prevent AFL++ persistent mode.
 
 **0 exec/sec**
