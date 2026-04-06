@@ -2,7 +2,7 @@
 
 A coverage-guided fuzzing framework for testing the Poly/ML compiler frontend on ARM64, built as a BSc Final Year Project at King's College London.
 
-**Motivation:** Poly/ML is a critical component of the Isabelle/HOL proof assistant. It forms part of Isabelle's trusted computing base, so bugs here undermine proof soundness. This project establishes the first systematic fuzzing-based reliability baseline for Poly/ML on ARM64.
+**Motivation:** Poly/ML is a core component of the Isabelle/HOL proof assistant and forms part of its trusted computing base. This project establishes the first systematic fuzzing-based reliability baseline for Poly/ML on ARM64.
 
 **Scope:** Lexical analysis and parsing (compiler frontend only).
 
@@ -26,7 +26,7 @@ cd polyml-fuzz
 ./fuzz.sh
 ```
 
-That's it. `setup.sh` handles all dependencies and builds. `fuzz.sh` guides you through the rest, including post-campaign analysis and the Phase 1 to Phase 2 handoff.
+`setup.sh` handles all dependencies and builds. `fuzz.sh` guides you through the full campaign lifecycle, including post-campaign analysis and the Phase 1 to Phase 2 corpus handoff.
 
 ---
 
@@ -56,6 +56,8 @@ polyml-fuzz/
 |   |-- verify-build.sh           # Verify AFL++ instrumentation is active
 |   |-- validate-seeds.sh         # Run all 72 seeds through poly
 |   |-- prepare-evolved-seeds.sh  # Copy Phase 1 queue for use as Phase 2 seeds
+|   |-- fetch-isabelle-seeds.sh   # Extract SML seeds from Isabelle source
+|   |-- sml_mutator.py            # Grammar-aware AFL++ custom mutator
 |   \-- trim-seeds.sh             # Minimise large seeds with afl-tmin
 |-- campaign/
 |   |-- start.sh                  # tmux launcher: opens fuzzer, monitor, and analytics panes
@@ -73,9 +75,9 @@ polyml-fuzz/
 \-- build/                        # Build outputs (gitignored)
 ```
 
-**External dependencies** (cloned automatically by `./setup.sh` on Linux):
-- `AFLplusplus/` -- [github.com/AFLplusplus/AFLplusplus](https://github.com/AFLplusplus/AFLplusplus)
-- `polyml-src/` -- [github.com/polyml/polyml](https://github.com/polyml/polyml)
+External dependencies (cloned automatically by `./setup.sh` on Linux):
+- `AFLplusplus/`: [github.com/AFLplusplus/AFLplusplus](https://github.com/AFLplusplus/AFLplusplus)
+- `polyml-src/`: [github.com/polyml/polyml](https://github.com/polyml/polyml)
 
 ---
 
@@ -112,7 +114,7 @@ You will need to clone `AFLplusplus/` and `polyml-src/` manually before running 
 ./fuzz.sh
 ```
 
-The wizard prompts for phase, duration, and instance count, then launches the campaign inside a tmux session with three windows: the fuzzer, a live monitor, and an analytics logger. When the campaign ends, it runs post-campaign analysis automatically and asks whether to launch Phase 2.
+The wizard prompts for phase, duration, and instance count, then launches the campaign inside a tmux session with three windows: the fuzzer, a live monitor, and an analytics logger. When the campaign ends, it runs post-campaign analysis automatically and offers to launch Phase 2.
 
 ### Make targets
 
@@ -147,13 +149,21 @@ These exercise the lexer: tokenisation, operators, literals, nested comments, an
 
 Seeds: `stress/`, `modules/`, `datatypes/`
 
-These exercise the parser with deep nesting, module hierarchies, complex types, and functor applications. Only run Phase 2 if Phase 1 was productive.
+These exercise the parser with deep nesting, module hierarchies, complex types, and functor applications. Only run Phase 2 if Phase 1 was productive. Phase 2 uses a reduced timeout (5000ms), CMPLOG instrumentation on fuzzer01 and fuzzer02 to aid magic-byte solving, and the `rare` power schedule on fuzzer03 to diversify edge exploration.
 
-When launched via `fuzz.sh`, Phase 2 is offered automatically after Phase 1 completes, with the option to seed it from Phase 1's evolved corpus.
+When launched via `fuzz.sh`, Phase 2 is offered automatically after Phase 1 completes, with the option to seed it from Phase 1's evolved corpus. An optional `afl-cmin` minimisation step is offered before Phase 2 launches.
+
+### Grammar-aware mutator (optional)
+
+A custom AFL++ mutator (`scripts/sml_mutator.py`) applies structure-aware SML mutations such as pathological float literals, long identifiers, and nested expression variants. Enable with:
+
+```bash
+./campaign/launch.sh --phase 2 --grammar-mutator --duration 259200 --instances 4
+```
 
 ### Saturation
 
-Coverage saturation is declared when fewer than 10 new edges are found per hour for 3 consecutive hours. `analytics.sh` tracks this and logs to `results/<campaign>/analytics/saturation.log`.
+Coverage saturation is declared when fewer than 10 new edges are found per hour for 3 consecutive hours. `analytics.sh` tracks this automatically and logs to `results/<campaign>/analytics/saturation.log`.
 
 ---
 
@@ -166,6 +176,7 @@ When a campaign ends via `fuzz.sh` or `campaign/start.sh`, analysis runs automat
 ```
 
 This runs four steps in sequence:
+
 1. Collect and deduplicate crashes (SHA-256 deduplication, then `afl-tmin` minimisation)
 2. Triage each crash (reproduce, classify by fault type: UBSan / ASan / signal)
 3. Generate `results/<campaign>/REPORT.md` with coverage, crash counts, and corpus stats
@@ -189,14 +200,16 @@ UBSAN_OPTIONS=print_stacktrace=1 \
 
 ---
 
-## Pre-Campaign Findings
+## Findings
 
-**ub1** - UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (a factorial function and a simple algebraic datatype). This is ARM64-specific and reproducible on both macOS and Linux ARM64. Found before the main campaign; not counted as a campaign result.
+**ub1 (pre-campaign):** UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (a factorial function and a simple algebraic datatype). ARM64-specific; reproducible on macOS and Linux ARM64.
 
 ```bash
 poly < results/early-findings/ub1/inputs/seed_fun.sml
 poly < results/early-findings/ub1/inputs/seed_datatype.sml
 ```
+
+**Campaign findings:** See `results/<campaign>/REPORT.md` and `results/<campaign>/fuzzer*/crashes/` for full crash inputs, triage reports, and sanitiser logs.
 
 ---
 
@@ -234,15 +247,3 @@ Run campaigns on Linux ARM64. macOS System V shared memory limits prevent AFL++ 
 ```bash
 ./scripts/build-polyml-coverage.sh   # or re-run ./setup.sh
 ```
-
----
-
-## Project Goals
-
-1. Build instrumented Poly/ML on ARM64 -- **COMPLETE**
-2. Curated seed corpus of 72 SML programs -- **COMPLETE**
-3. Coverage-guided fuzzing framework with full campaign lifecycle -- **COMPLETE**
-4. Run Phase 1 campaign (3-4 days, Subset A) -- pending
-5. Run Phase 2 campaign (3-4 days, Subset B) -- pending (conditional)
-6. Analyse crashes and report findings -- pending
-7. Establish reliability baseline for Poly/ML on ARM64 -- pending
