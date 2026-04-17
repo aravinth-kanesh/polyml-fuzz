@@ -202,14 +202,29 @@ UBSAN_OPTIONS=print_stacktrace=1 \
 
 ## Findings
 
-**ub1 (pre-campaign):** UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246`, triggered by two valid SML programs (a factorial function and a simple algebraic datatype). ARM64-specific; reproducible on macOS and Linux ARM64.
+Four reliability findings were confirmed across the pre-campaign validation and two production campaigns. All four remain present in the upstream Poly/ML repository as of April 2026.
 
+**Finding 1 — ARM64-specific UBSan overflow (pre-campaign)**
+UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246` (line 440 in current upstream master). Triggered by two valid SML programs. ARM64-specific: the same programs produce no output on x86-64.
 ```bash
 poly < results/early-findings/ub1/inputs/seed_fun.sml
 poly < results/early-findings/ub1/inputs/seed_datatype.sml
 ```
+A one-line fix (cast divisor to `POLYSIGNED`) was validated locally but remains unmerged upstream.
 
-**Campaign findings:** See `results/<campaign>/REPORT.md` and `results/<campaign>/fuzzer*/crashes/` for full crash inputs, triage reports, and sanitiser logs.
+**Finding 2 — Lexer unbounded memory allocation on pathological float literals (Phase 1)**
+`readChars` in `LEX_.ML` reads exponent digits after `e`/`E` in floating-point literals with no length bound. An exponent of hundreds of digits causes allocation proportional to length (confirmed without ASan: 200 digits → 20 MB, 1,000,000 digits → 192 MB). A bounded fix (`readCharsMax`, caps at 20 digits) was validated locally. Bug report submitted to Poly/ML mailing list; classification as defect is pending maintainer confirmation.
+
+**Finding 3 — Module elaboration SIGSEGV: nested structure with corrupted identifiers (Phase 2)**
+Two independently discovered AFL++ inputs trigger SIGSEGV in the module elaboration code when AFL++ havoc mutations corrupt structure names in a nested geometry module. Root cause: a type safety defect in overloading resolution in `TYPE_TREE.ML` — an `OverloadSetVar` is not committed at function declaration time, leading to a type mismatch crash when called with float arguments. Minimised reproducer: `fun ma x y = (x - y); ma 0.0 0.0`.
+
+**Finding 4 — Module elaboration SIGSEGV: integer literal pattern in value binding (Phase 2)**
+An 80-byte structure definition containing `val 0 = 0` triggers SIGSEGV. The parser accepts the integer-literal pattern without error; the elaborator then crashes processing it. Reproducer:
+```
+structure Mat0 = struct val 0 = 0 fun s0uare x = x+x fun e 0 = () end; val a = Mat0.s0uare 0.0
+```
+
+Full crash inputs, triage reports, and LLVM coverage reports are in `results/findings/`. See `results/findings/README.md` for the campaign summary.
 
 ---
 

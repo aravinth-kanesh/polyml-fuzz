@@ -29,88 +29,37 @@
 
 ---
 
-## Campaign Plan
+## Campaigns Completed (March 2026)
 
-### Step 1: AWS Graviton Setup
+All production campaigns have been completed on AWS EC2 c7g.xlarge (Graviton 3, ARM64).
 
-```bash
-# Launch c7g.xlarge (ARM64 Ubuntu 22.04)
-./scripts/ec2-setup.sh
-./scripts/build-polyml.sh
-./scripts/build-harness.sh
-./scripts/verify-build.sh
-./scripts/validate-seeds.sh
-```
+| Campaign | Duration | Seeds | Edges | Crashes | Coverage |
+|----------|----------|-------|-------|---------|----------|
+| Phase 1 (Subset A, lexer) | 72 hours | 35 | 2,014 | 3 (SIGKILL/OOM) | 28.57% libpolyml/ |
+| Phase 2 (Subset B, parser) | 72 hours | 838 | 2,017 | 3 (SIGSEGV) | 28.55% libpolyml/ |
+| Grammar-aware retry | 24 hours | 838 | 2,003 | 2 (SIGSEGV) | 28.59% libpolyml/ |
 
-### Step 2: Phase 1 Campaign (3-4 days, Subset A)
+Coverage ceiling: **28.55–28.59%** across all three campaigns with different mutation strategies,
+confirming the ceiling is structural (determined by frontend entry points) not mutation-dependent.
 
-```bash
-tmux new -s phase1
+## Findings Summary
 
-# Launch Phase 1 (3 days = 259200 seconds)
-./campaign/launch.sh --phase 1 --duration 259200 --instances 4
+Four reliability findings were confirmed, all present in upstream master as of April 2026:
 
-# In a second pane: track saturation
-./campaign/analytics.sh phase1-lexer-YYYYMMDD-HHMMSS
+1. **ub1** — ARM64-specific UBSan overflow in `arm64.cpp:246` (pre-campaign). Fix validated locally, unmerged.
+2. **Finding 2** — Lexer OOM on pathological float literal exponents (Phase 1). Fix validated locally, unmerged.
+3. **Findings 3+4** — Three SIGSEGV crashes in module elaboration code (`TYPE_TREE.ML`, `TYPECHECK_PARSETREE.sml`), caused by a type safety defect in overloading resolution (Phase 2). Fix attempted but reverted (breaks bootstrap).
 
-# In a third pane: live dashboard
-watch -n 30 ./campaign/monitor.sh phase1-lexer-YYYYMMDD-HHMMSS
-```
+See `results/findings/README.md` for full details and reproducer commands.
 
-Stop early if `analytics.sh` reports saturation (< 10 new edges/hour for 3 consecutive hours).
+## Future Work
 
-### Step 3: Post-Phase 1 Analysis
-
-```bash
-./campaign/collect-crashes.sh phase1-lexer-YYYYMMDD-HHMMSS
-./campaign/triage.sh phase1-lexer-YYYYMMDD-HHMMSS
-./campaign/report.sh phase1-lexer-YYYYMMDD-HHMMSS
-```
-
-### Step 4: Phase 2 Campaign (3-4 days, Subset B)
-
-Only run if Phase 1 was productive (non-trivial crashes or coverage).
-
-```bash
-./campaign/launch.sh --phase 2 --duration 259200 --instances 4
-```
+If extending this project:
+- **x86-64 comparison:** Run equivalent campaigns on x86-64 to quantify platform-specific vs platform-agnostic findings
+- **Grammar-aware mutator:** `scripts/sml_mutator.py` is implemented but the retry showed no new fault classes; further tuning may help
+- **C-reduce integration:** Automated crash minimisation to smallest reproducer (currently manual)
+- **CI/CD integration:** Short campaigns on each upstream Poly/ML commit to detect regressions before release
 
 ---
 
-## What to Look For
-
-### Success indicators
-- Exec/sec > 1000 (ideally 2000+ on Graviton)
-- Coverage growth in first 24-48 hours
-- Crashes discovered (any type is useful)
-- Saturation detected (confirms thorough exploration)
-
-### Saturation is the goal
-Coverage saturation (tracked by `analytics.sh`) tells you when the campaign has exhausted reachable edges. This is the key measurement for your evaluation chapter.
-
----
-
-## Budget (~$100 AWS credit)
-
-| Instance | vCPUs | $/hour | 3+3 days cost |
-|----------|-------|--------|---------------|
-| c7g.xlarge | 4 | ~$0.14 | ~$20 |
-| c7g.2xlarge | 8 | ~$0.29 | ~$42 |
-
-**Recommended: AWS EC2 free tier ARM64 instance.** 2 fuzzer instances suited to low-spec free tier hardware.
-
----
-
-## For the Evaluation Chapter (Chapter 5)
-
-After the campaign, document:
-1. **Experimental setup:** Instance type, instances, seed subset, duration per phase
-2. **Coverage results:** Edges found, saturation time, edges/hour plot
-3. **Fault discovery:** Crashes found, classified by type (UBSan/ASan/signal)
-4. **Throughput:** Exec/sec achieved on ARM64 Graviton
-5. **Pre-campaign findings:** UBSan bug in `arm64.cpp:246` (mark as pre-campaign)
-6. **Discussion:** What the coverage and crashes say about Poly/ML reliability on ARM64
-
----
-
-**Status:** Ready for AWS deployment
+**Status:** Campaigns complete — April 2026
