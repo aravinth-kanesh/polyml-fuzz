@@ -16,7 +16,7 @@ A coverage-guided fuzzing framework for testing the Poly/ML compiler frontend on
 
 ```bash
 # On AWS Graviton (Ubuntu 22.04 ARM64) or any ARM64 Linux machine:
-git clone <repo-url> polyml-fuzz
+git clone https://github.com/aravinth-kanesh/polyml-fuzz.git polyml-fuzz
 cd polyml-fuzz
 
 # One-command setup: installs tools, builds poly, verifies, validates seeds
@@ -86,7 +86,7 @@ External dependencies (cloned automatically by `./setup.sh` on Linux):
 ### On AWS Graviton or any ARM64 Linux machine
 
 ```bash
-git clone <repo-url> polyml-fuzz && cd polyml-fuzz
+git clone https://github.com/aravinth-kanesh/polyml-fuzz.git polyml-fuzz && cd polyml-fuzz
 ./setup.sh
 ```
 
