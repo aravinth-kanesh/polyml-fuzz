@@ -31,7 +31,7 @@ Generated: Thu Mar 19 12:59:29 UTC 2026
 | ASan bugs             | 0    |
 | Signal crashes        | 0  |
 | Unique hangs (total)  | 65   |
-| Confirmed hangs       | 0 |
+| Confirmed hangs       | 34 |
 | Hang-then-crash       | 0 |
 
 ## Corpus Evolution

@@ -202,7 +202,7 @@ UBSAN_OPTIONS=print_stacktrace=1 \
 
 ## Findings
 
-Four reliability findings were confirmed across the pre-campaign validation and two production campaigns. All four remain present in the upstream Poly/ML repository as of April 2026.
+Four reliability findings were confirmed across the pre-campaign validation and two production campaigns. Three remain unaddressed in the upstream Poly/ML repository as of April 2026; the Phase 2 module elaboration defect (Finding 3, crashes 1 and 2) was confirmed and fixed in commit `cf7b84a` by the Poly/ML development team following this bug report.
 
 **Finding 1 — ARM64-specific UBSan overflow (pre-campaign)**
 UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246` (line 440 in current upstream master). Triggered by two valid SML programs. ARM64-specific: the same programs produce no output on x86-64.
