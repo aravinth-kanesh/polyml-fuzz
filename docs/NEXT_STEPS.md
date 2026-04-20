@@ -46,9 +46,9 @@ confirming the ceiling is structural (determined by frontend entry points) not m
 
 Four reliability findings were confirmed, all present in upstream master as of April 2026:
 
-1. **ub1** — ARM64-specific UBSan overflow in `arm64.cpp:246` (pre-campaign). Fix validated locally, unmerged.
-2. **Finding 2** — Lexer OOM on pathological float literal exponents (Phase 1). Fix validated locally, unmerged.
-3. **Findings 3+4** — Three SIGSEGV crashes in module elaboration code (`TYPE_TREE.ML`, `TYPECHECK_PARSETREE.sml`), caused by a type safety defect in overloading resolution (Phase 2). Fix attempted but reverted (breaks bootstrap).
+1. **ub1** - ARM64-specific UBSan overflow in `arm64.cpp:246` (pre-campaign). Fix validated locally, unmerged.
+2. **Finding 2** - Lexer OOM on pathological float literal exponents (Phase 1). Fix validated locally, unmerged.
+3. **Findings 3+4** - Three SIGSEGV crashes in module elaboration code (`TYPE_TREE.ML`, `TYPECHECK_PARSETREE.sml`), caused by a type safety defect in overloading resolution (Phase 2). Fix attempted but reverted (breaks bootstrap).
 
 See `results/findings/README.md` for full details and reproducer commands.
 
@@ -62,4 +62,4 @@ If extending this project:
 
 ---
 
-**Status:** Campaigns complete — April 2026
+**Status:** Campaigns complete - April 2026

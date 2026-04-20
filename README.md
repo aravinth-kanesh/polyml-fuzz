@@ -204,7 +204,7 @@ UBSAN_OPTIONS=print_stacktrace=1 \
 
 Four reliability findings were confirmed across the pre-campaign validation and two production campaigns. Three remain unaddressed in the upstream Poly/ML repository as of April 2026; the Phase 2 module elaboration defect (Finding 3, crashes 1 and 2) was confirmed and fixed in commit `cf7b84a` by the Poly/ML development team following this bug report.
 
-**Finding 1 — ARM64-specific UBSan overflow (pre-campaign)**
+**Finding 1 - ARM64-specific UBSan overflow (pre-campaign)**
 UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246` (line 440 in current upstream master). Triggered by two valid SML programs. ARM64-specific: the same programs produce no output on x86-64.
 ```bash
 poly < results/early-findings/ub1/inputs/seed_fun.sml
@@ -212,13 +212,13 @@ poly < results/early-findings/ub1/inputs/seed_datatype.sml
 ```
 A one-line fix (cast divisor to `POLYSIGNED`) was validated locally but remains unmerged upstream.
 
-**Finding 2 — Lexer unbounded memory allocation on pathological float literals (Phase 1)**
+**Finding 2 - Lexer unbounded memory allocation on pathological float literals (Phase 1)**
 `readChars` in `LEX_.ML` reads exponent digits after `e`/`E` in floating-point literals with no length bound. An exponent of hundreds of digits causes allocation proportional to length (confirmed without ASan: 200 digits → 20 MB, 1,000,000 digits → 192 MB). A bounded fix (`readCharsMax`, caps at 20 digits) was validated locally. Bug report submitted to Poly/ML mailing list; classification as defect is pending maintainer confirmation.
 
-**Finding 3 — Module elaboration SIGSEGV: nested structure with corrupted identifiers (Phase 2)**
-Two independently discovered AFL++ inputs trigger SIGSEGV in the module elaboration code when AFL++ havoc mutations corrupt structure names in a nested geometry module. Root cause: a type safety defect in overloading resolution in `TYPE_TREE.ML` — an `OverloadSetVar` is not committed at function declaration time, leading to a type mismatch crash when called with float arguments. Minimised reproducer: `fun ma x y = (x - y); ma 0.0 0.0`.
+**Finding 3 - Module elaboration SIGSEGV: nested structure with corrupted identifiers (Phase 2)**
+Two independently discovered AFL++ inputs trigger SIGSEGV in the module elaboration code when AFL++ havoc mutations corrupt structure names in a nested geometry module. Root cause: a type safety defect in overloading resolution in `TYPE_TREE.ML` - an `OverloadSetVar` is not committed at function declaration time, leading to a type mismatch crash when called with float arguments. Minimised reproducer: `fun ma x y = (x - y); ma 0.0 0.0`.
 
-**Finding 4 — Module elaboration SIGSEGV: integer literal pattern in value binding (Phase 2)**
+**Finding 4 - Module elaboration SIGSEGV: integer literal pattern in value binding (Phase 2)**
 An 80-byte structure definition containing `val 0 = 0` triggers SIGSEGV. The parser accepts the integer-literal pattern without error; the elaborator then crashes processing it. Reproducer:
 ```
 structure Mat0 = struct val 0 = 0 fun s0uare x = x+x fun e 0 = () end; val a = Mat0.s0uare 0.0
