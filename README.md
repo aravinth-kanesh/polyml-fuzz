@@ -1,6 +1,6 @@
 # Poly/ML Compiler Fuzzing on ARM64
 
-A coverage-guided fuzzing framework for testing the Poly/ML compiler frontend on ARM64, built as a BSc Final Year Project at King's College London.
+A coverage-guided fuzzing framework for testing the Poly/ML compiler frontend on ARM64.
 
 **Motivation:** Poly/ML is a core component of the Isabelle/HOL proof assistant and forms part of its trusted computing base. This project establishes a systematic fuzzing-based reliability baseline for Poly/ML on ARM64.
 
