@@ -167,19 +167,3 @@ The trials confirm that the fuzzing infrastructure is correctly configured for t
 | Throughput on ARM64 | ~1,000 exec/sec on Apple M2 (local); higher expected on Graviton |
 | Corpus evolution (seed promotion) | Confirmed (33 seeds → 627 evolved in Phase 1) |
 
----
-
-## Notes for Main Campaign
-
-- **Platform:** macOS trials are for infrastructure validation only. All production campaigns will
-  run on a persistent ARM64 Linux instance (Ubuntu 22.04). Linux removes the macOS shared memory
-  constraints that caused the SIGKILL artefacts.
-- **Duration:** Main campaigns are 3-4 days (Phase 1) and 3-4 days (Phase 2, conditional on
-  Phase 1 results). The ~1-hour saturation observed in 2-hour trials on a local machine reflects
-  the limited exploration possible in a short window with 2 instances; a 72-hour run with 4
-  instances will explore a much larger fraction of the reachable edge space.
-- **Throughput expectation:** A smoke test on Ubuntu 22.04 ARM64 (UTM VM, 4 vCPU, Apple M2)
-  achieved ~1,916 exec/sec across 4 instances (see smoke-test-findings.md). A bare-metal ARM64
-  instance is expected to achieve higher throughput.
-- **Instances:** Main campaign uses 4 instances (1 main + 3 secondary), doubling the trial
-  configuration.

@@ -48,15 +48,3 @@ These findings indicate ARM64-specific issues in the Poly/ML runtime. The bugs a
 ### Regression Testing
 Copies of these seeds are in `seeds/regression/` to ensure the main campaign can detect if similar bugs exist elsewhere.
 
----
-
-## Adding New Findings
-
-When crashes are discovered during the main campaign:
-
-1. Create a new directory: `results/early-findings/crash-XXX/`
-2. Include:
-   - `inputs/` - Minimised input files (`*.sml`)
-   - `logs/` - Sanitiser logs (`*_asan.log`) and exit codes
-   - `notes.txt` - Reproduction notes
-3. If it's a new bug type, add to `seeds/regression/`
