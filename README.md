@@ -8,7 +8,7 @@ A coverage-guided fuzzing framework for testing the Poly/ML compiler frontend on
 
 **Tools:** AFL++, AddressSanitizer, UndefinedBehaviorSanitizer, LLVM source coverage.
 
-**Report:** [aravinth-kaneshalingam-fyp-report](https://github.com/aravinth-kanesh/aravinth-kaneshalingam-fyp-report)
+**DOI:** [10.5281/zenodo.19695286](https://doi.org/10.5281/zenodo.19695286)
 
 ---
 
