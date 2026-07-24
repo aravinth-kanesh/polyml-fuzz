@@ -57,6 +57,7 @@ polyml-fuzz/
 |   |-- validate-seeds.sh         # Run all 72 seeds through poly
 |   |-- prepare-evolved-seeds.sh  # Copy Phase 1 queue for use as Phase 2 seeds
 |   |-- fetch-isabelle-seeds.sh   # Extract SML seeds from Isabelle source
+|   |-- fetch-campaign-findings.sh# Download campaign artefacts from EC2
 |   |-- sml_mutator.py            # Grammar-aware AFL++ custom mutator
 |   \-- trim-seeds.sh             # Minimise large seeds with afl-tmin
 |-- campaign/
@@ -67,10 +68,12 @@ polyml-fuzz/
 |   |-- analyse.sh                # Post-campaign one-liner: crashes + triage + report + coverage
 |   |-- collect-crashes.sh        # Deduplicate and minimise crashes
 |   |-- triage.sh                 # Reproduce and classify crashes by fault type
+|   |-- triage-hangs.sh           # Reproduce and classify hangs
 |   |-- reproduce-crash.sh        # Standalone single-crash reproduction tool
 |   \-- report.sh                 # Generate Markdown campaign summary
 |-- results/
-|   \-- early-findings/           # Bugs found before the main campaign
+|   |-- early-findings/           # Bugs found before the main campaign
+|   \-- findings/                 # Campaign results: crashes, triage, coverage
 |-- docs/                         # Supporting documentation
 \-- build/                        # Build outputs (gitignored)
 ```
@@ -119,7 +122,7 @@ The wizard prompts for phase, duration, and instance count, then launches the ca
 ### Make targets
 
 ```bash
-make smoke       # 30-minute validation run (Phase 1, 1 instance)
+make smoke       # 30-minute validation run (Phase 1, 2 instances)
 make phase1      # Full Phase 1 campaign (3 days, 4 instances)
 make phase2      # Phase 2 without evolved seeds
 make phase2 EVOLVED=phase1-lexer-YYYYMMDD-HHMMSS   # Phase 2 with Phase 1 corpus
@@ -175,12 +178,13 @@ When a campaign ends via `fuzz.sh` or `campaign/start.sh`, analysis runs automat
 ./campaign/analyse.sh <campaign-name>
 ```
 
-This runs four steps in sequence:
+This runs five steps in sequence:
 
 1. Collect and deduplicate crashes (SHA-256 deduplication, then `afl-tmin` minimisation)
 2. Triage each crash (reproduce, classify by fault type: UBSan / ASan / signal)
-3. Generate `results/<campaign>/REPORT.md` with coverage, crash counts, and corpus stats
+3. Triage hangs (classify as confirmed hang, hang-then-crash, or not reproduced)
 4. Run LLVM source coverage against the evolved corpus, writing per-file results to `results/<campaign>/coverage/`
+5. Generate `results/<campaign>/REPORT.md` with coverage, crash counts, and corpus stats
 
 The report includes total `libpolyml/` region coverage and `arm64.cpp` coverage if the coverage binary was built.
 
@@ -202,29 +206,23 @@ UBSAN_OPTIONS=print_stacktrace=1 \
 
 ## Findings
 
-Four reliability findings were confirmed across the pre-campaign validation and two production campaigns. Three remain unaddressed in the upstream Poly/ML repository as of April 2026; the Phase 2 module elaboration defect (Finding 3, crashes 1 and 2) was confirmed and fixed in commit `cf7b84a` by the Poly/ML development team following this bug report.
+Four findings were reported upstream, all tracked as public issues on `polyml/polyml`. The headline result is [#272](https://github.com/polyml/polyml/issues/272): a genuine type-safety defect discovered by this framework, confirmed and fixed upstream by the Poly/ML maintainer.
 
-**Finding 1 - ARM64-specific UBSan overflow (pre-campaign)**
-UBSan unsigned integer overflow in `libpolyml/arm64.cpp:246` (line 440 in current upstream master). Triggered by two valid SML programs. ARM64-specific: the same programs produce no output on x86-64.
+| Issue | Finding | Status |
+|-------|---------|--------|
+| [#272](https://github.com/polyml/polyml/issues/272) | Type-safety defect in overloaded numeric resolution (`TYPE_TREE.ML`). An `OverloadSetVar` is not committed at function declaration, so integer machine code runs on float arguments, giving a SIGSEGV. Minimised reproducer: `fun ma x y = (x - y); ma 0.0 0.0` | **Fixed upstream** in `cf7b84a` |
+| [#271](https://github.com/polyml/polyml/issues/271) | Pointer overflow in `GetConstSegmentForCode` (`libpolyml/arm64.cpp:246`). A negative `POLYSIGNED` offset divided by unsigned `sizeof(PolyWord)` is promoted to unsigned, overflowing the pointer arithmetic. Triggered by valid SML; ARM64-specific, with no equivalent code path on x86-64. | Open; one-line fix proposed in [PR #294](https://github.com/polyml/polyml/pull/294) |
+| [#274](https://github.com/polyml/polyml/issues/274) | SIGSEGV from a structure body containing `val 0 = 0`. | Closed as a duplicate of #272 (same root cause and fix) |
+| [#273](https://github.com/polyml/polyml/issues/273) | Lexer allocates without bound on float literals with very long exponents (`readChars` in `LEX_.ML`). | Closed: the maintainer judged that singling out exponent length is not warranted when any input may be arbitrarily long |
+
+Reproduce the #271 finding with a UBSan-instrumented build:
+
 ```bash
-poly < results/early-findings/ub1/inputs/seed_fun.sml
-poly < results/early-findings/ub1/inputs/seed_datatype.sml
-```
-A one-line fix (cast divisor to `POLYSIGNED`) was validated locally but remains unmerged upstream.
-
-**Finding 2 - Lexer unbounded memory allocation on pathological float literals (Phase 1)**
-`readChars` in `LEX_.ML` reads exponent digits after `e`/`E` in floating-point literals with no length bound. An exponent of hundreds of digits causes allocation proportional to length (confirmed without ASan: 200 digits → 20 MB, 1,000,000 digits → 192 MB). A bounded fix (`readCharsMax`, caps at 20 digits) was validated locally. Bug report submitted to Poly/ML mailing list; classification as defect is pending maintainer confirmation.
-
-**Finding 3 - Module elaboration SIGSEGV: nested structure with corrupted identifiers (Phase 2)**
-Two independently discovered AFL++ inputs trigger SIGSEGV in the module elaboration code when AFL++ havoc mutations corrupt structure names in a nested geometry module. Root cause: a type safety defect in overloading resolution in `TYPE_TREE.ML` - an `OverloadSetVar` is not committed at function declaration time, leading to a type mismatch crash when called with float arguments. Minimised reproducer: `fun ma x y = (x - y); ma 0.0 0.0`.
-
-**Finding 4 - Module elaboration SIGSEGV: integer literal pattern in value binding (Phase 2)**
-An 80-byte structure definition containing `val 0 = 0` triggers SIGSEGV. The parser accepts the integer-literal pattern without error; the elaborator then crashes processing it. Reproducer:
-```
-structure Mat0 = struct val 0 = 0 fun s0uare x = x+x fun e 0 = () end; val a = Mat0.s0uare 0.0
+UBSAN_OPTIONS=print_stacktrace=1 poly < results/early-findings/ub1/inputs/seed_fun.sml
+UBSAN_OPTIONS=print_stacktrace=1 poly < results/early-findings/ub1/inputs/seed_datatype.sml
 ```
 
-Full crash inputs, triage reports, and LLVM coverage reports are in `results/findings/`. See `results/findings/README.md` for the campaign summary.
+Crash inputs, triage reports, and LLVM coverage results for both campaigns are in `results/findings/`; see `results/findings/README.md` for the campaign summary.
 
 ---
 
