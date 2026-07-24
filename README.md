@@ -125,7 +125,7 @@ The wizard prompts for phase, duration, and instance count, then launches the ca
 make smoke       # 30-minute validation run (Phase 1, 2 instances)
 make phase1      # Full Phase 1 campaign (3 days, 4 instances)
 make phase2      # Phase 2 without evolved seeds
-make phase2 EVOLVED=phase1-lexer-YYYYMMDD-HHMMSS   # Phase 2 with Phase 1 corpus
+make phase2 EVOLVED=phase1-lexer-YYYYMMDD-HHMMSS    # Phase 2 with Phase 1 corpus
 make monitor CAMPAIGN=phase1-lexer-YYYYMMDD-HHMMSS  # Live dashboard
 make report CAMPAIGN=phase1-lexer-YYYYMMDD-HHMMSS   # Re-run post-campaign analysis
 ```
